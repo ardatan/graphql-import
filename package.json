@@ -1,9 +1,11 @@
 {
   "name": "graphql-import",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "repository": "git@github.com:graphcool/graphql-import.git",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "typescript": {
@@ -11,7 +13,7 @@
   },
   "scripts": {
     "prepublish": "npm run build",
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc -d",
     "test-only": "npm run build && ava --verbose dist/**/*.test.js",
     "test": "tslint src/**/*.ts && npm run test-only"
   },
