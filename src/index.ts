@@ -94,7 +94,7 @@ function filterTypeDefinitions(
     'ScalarTypeDefinition',
     'ObjectTypeDefinition',
     'InterfaceTypeDefinition',
-    'UnionTypeDefinition',
+    'EnumTypeDefinition',
     'UnionTypeDefinition',
     'InputObjectTypeDefinition',
   ]

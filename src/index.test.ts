@@ -66,6 +66,23 @@ type C {
   t.is(importSchema('fixtures/field-types/a.graphql'), expectedSDL)
 })
 
+test('importSchema: enums', t => {
+  const expectedSDL = `\
+type A {
+  first: String @first
+  second: Float
+  b: B
+}
+
+enum B {
+  B1
+  B2
+  B3
+}
+`
+  t.is(importSchema('fixtures/enums/a.graphql'), expectedSDL)
+})
+
 test('importSchema: import all', t => {
   const expectedSDL = `\
 type A {
