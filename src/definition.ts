@@ -1,4 +1,4 @@
-import { keyBy } from 'lodash'
+import { keyBy, uniqBy } from 'lodash'
 import {
   DocumentNode,
   TypeDefinitionNode,
@@ -20,21 +20,27 @@ export function completeDefinitionPool(
   newTypeDefinitions: TypeDefinitionNode[],
   schemaPath: string,
 ): TypeDefinitionNode[] {
+  const visitedDefinitions: { [name: string]: boolean } = {}
   while (newTypeDefinitions.length > 0) {
     const schemaMap: DefinitionMap = keyBy(allDefinitions, d => d.name.value)
     const newDefinition = newTypeDefinitions.shift()
+    if (visitedDefinitions[newDefinition.name.value]) {
+      continue
+    }
 
-    newTypeDefinitions.push(
-      ...collectNewTypeDefinitions(
-        defintionPool,
-        newDefinition,
-        schemaMap,
-        schemaPath,
-      ),
+    const collectedTypedDefinitions = collectNewTypeDefinitions(
+      defintionPool,
+      newDefinition,
+      schemaMap,
+      schemaPath,
     )
+    newTypeDefinitions.push(...collectedTypedDefinitions)
+    defintionPool.push(...collectedTypedDefinitions)
+
+    visitedDefinitions[newDefinition.name.value] = true
   }
 
-  return defintionPool
+  return uniqBy(defintionPool, 'name.value')
 }
 
 function collectNewTypeDefinitions(

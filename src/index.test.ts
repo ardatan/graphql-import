@@ -93,6 +93,8 @@ type A {
 
 type B {
   hello: String!
+  c1: C1
+  c2: C2
 }
 
 type C1 {
@@ -136,4 +138,10 @@ input C {
 }
 `
   t.is(importSchema('fixtures/input-types/a.graphql'), expectedSDL)
+})
+
+test('importSchema: complex test', t => {
+  t.notThrows(() => {
+    importSchema('fixtures/complex/a.graphql')
+  })
 })

@@ -1,5 +1,5 @@
 import { TypeDefinitionNode, DefinitionNode, parse, print } from 'graphql'
-import { flatten, uniqBy } from 'lodash'
+import { flatten } from 'lodash'
 import * as fs from 'fs'
 import * as path from 'path'
 import { completeDefinitionPool } from './definition'
@@ -7,10 +7,6 @@ import { completeDefinitionPool } from './definition'
 export interface RawModule {
   imports: string[]
   from: string
-}
-
-export interface Module {
-  importedDefinitions: TypeDefinitionNode[]
 }
 
 const read = f => fs.readFileSync(f, { encoding: 'utf8' })
@@ -41,29 +37,40 @@ export function importSchema(filePath: string): string {
   const sdl = read(filePath)
   const document = parse(sdl)
 
-  const allDefinitions = [
-    ...filterTypeDefinitions(document.definitions),
-    ...collectDefinitions(sdl, path.dirname(path.resolve(filePath))),
-  ]
-  document.definitions = uniqBy(allDefinitions, 'name.value')
+  const allDefinitions = collectDefinitions(['*'], sdl, path.resolve(filePath))
+  document.definitions = allDefinitions
   return print(document)
 }
 
-export function collectDefinitions(sdl: string, dirname: string): TypeDefinitionNode[] {
+export function collectDefinitions(
+  imports: string[],
+  sdl: string,
+  filePath: string,
+): TypeDefinitionNode[] {
+  const dirname = path.dirname(filePath)
   const rawModules = parseSDL(sdl)
   const document = parse(sdl)
   const currentTypeDefinitions = filterTypeDefinitions(document.definitions)
-  const importedTypeDefinitions = flatten(rawModules.map(m => {
-    const filePath = path.resolve(path.join(dirname, m.from))
-    const sdl = read(filePath)
-    return collectDefinitions(sdl, path.dirname(filePath))
-  }))
+  const importedTypeDefinitions = flatten(
+    rawModules.map(m => {
+      const moduleFilePath = path.resolve(path.join(dirname, m.from))
+      return collectDefinitions(m.imports, read(moduleFilePath), moduleFilePath)
+    }),
+  )
   const typeDefinitions = currentTypeDefinitions.concat(importedTypeDefinitions)
 
-  return flatten([
-    ...typeDefinitions,
-    ...rawModules.map(m => importDefinitions(m.imports, importedTypeDefinitions, m.from)),
-  ])
+  const filteredTypeDefinitions = importDefinitions(
+    imports,
+    typeDefinitions,
+    filePath,
+  )
+
+  return completeDefinitionPool(
+    typeDefinitions,
+    filteredTypeDefinitions.slice(0),
+    filteredTypeDefinitions.slice(0),
+    filePath,
+  )
 }
 
 function importDefinitions(
@@ -80,8 +87,8 @@ function importDefinitions(
 
     return completeDefinitionPool(
       typeDefinitions,
-      importedDefinitions,
-      importedDefinitions,
+      importedDefinitions.slice(0),
+      importedDefinitions.slice(0),
       schemaPath,
     )
   }

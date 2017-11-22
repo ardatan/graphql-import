@@ -5,3 +5,7 @@ type C1 {
 type C2 {
   id: ID!
 }
+
+type C3 {
+  id: ID!
+}
