@@ -1,0 +1,7 @@
+type C1 {
+  id: ID!
+}
+
+type C2 {
+  id: ID!
+}

@@ -1,0 +1,5 @@
+# import * from 'c.graphql'
+
+type B {
+  hello: String!
+}

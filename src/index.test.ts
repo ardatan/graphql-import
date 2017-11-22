@@ -66,6 +66,29 @@ type C {
   t.is(importSchema('fixtures/field-types/a.graphql'), expectedSDL)
 })
 
+test('importSchema: import all', t => {
+  const expectedSDL = `\
+type A {
+  first: String @first
+  second: Float
+  b: B
+}
+
+type B {
+  hello: String!
+}
+
+type C1 {
+  id: ID!
+}
+
+type C2 {
+  id: ID!
+}
+`
+  t.is(importSchema('fixtures/import-all/a.graphql'), expectedSDL)
+})
+
 test('importSchema: interfaces', t => {
   const expectedSDL = `\
 type A implements B {
