@@ -88,6 +88,7 @@ Please refer to [`src/index.test.ts`](src/index.test.ts) for more examples.
 
 ## Related topics & next steps
 
+- Static import step as build time
 - Namespaces
 - Support importing from HTTP endpoints (or [Links](https://github.com/apollographql/apollo-link))
 - Create RFC to add import syntax to GraphQL spec
