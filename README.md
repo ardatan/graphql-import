@@ -58,8 +58,6 @@ type B {
 `c.graphql`
 
 ```graphql
-# import C from 'c.graphql'
-
 type C {
   id: ID!
 }
