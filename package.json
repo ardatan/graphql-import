@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/node": "^8.0.53",
-    "ava": "^0.23.0",
+    "ava": "^0.24.0",
     "tslint": "^5.8.0",
     "tslint-config-standard": "^7.0.0",
     "typescript": "^2.6.1"
