@@ -1,6 +1,6 @@
 {
   "name": "graphql-import",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "MIT",
   "repository": "git@github.com:graphcool/graphql-import.git",
   "files": [
