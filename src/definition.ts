@@ -74,10 +74,44 @@ function collectNewTypeDefinitions(
     })
   }
 
+  if (newDefinition.kind === 'InterfaceTypeDefinition') {
+    newDefinition.fields.forEach(field => {
+      const namedType = getNamedType(field.type)
+      const typeName = namedType.name.value
+      if (
+        !definitionPool.some(d => d.name.value === typeName) &&
+        !builtinTypes.includes(typeName)
+      ) {
+        const schemaType = schemaMap[typeName] as ObjectTypeDefinitionNode
+        if (!schemaType) {
+          throw new Error(
+            `Field ${field.name.value}: Couldn't find type ${typeName} in ${
+              schemaPath
+            }.`,
+          )
+        }
+        newTypeDefinitions.push(schemaType)
+      }
+    })
+  }
+
+  if (newDefinition.kind === 'UnionTypeDefinition') {
+    newDefinition.types.forEach(type => {
+      if (!definitionPool.some(d => d.name.value === type.name.value)) {
+        const typeName = type.name.value
+        const typeMatch = schemaMap[typeName]
+        if (!typeMatch) {
+          throw new Error(`Couldn't find type ${typeName} in ${schemaPath}.`)
+        }
+        newTypeDefinitions.push(schemaMap[type.name.value])
+      }
+    })
+  }
+
   if (newDefinition.kind === 'ObjectTypeDefinition') {
     // collect missing interfaces
     newDefinition.interfaces.forEach(int => {
-      if (!definitionPool.some(d => d.name === int.name)) {
+      if (!definitionPool.some(d => d.name.value === int.name.value)) {
         const interfaceName = int.name.value
         const interfaceMatch = schemaMap[interfaceName]
         if (!interfaceMatch) {

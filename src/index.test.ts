@@ -108,6 +108,36 @@ type C2 {
   t.is(importSchema('fixtures/import-all/a.graphql'), expectedSDL)
 })
 
+test('importSchema: unions', t => {
+  const expectedSDL = `\
+type A {
+  b: B
+}
+
+union B = C1 | C2
+
+type C1 {
+  c1: ID
+}
+
+type C2 {
+  c2: ID
+}
+`
+  t.is(importSchema('fixtures/unions/a.graphql'), expectedSDL)
+})
+
+test('importSchema: scalar', t => {
+  const expectedSDL = `\
+type A {
+  b: B
+}
+
+scalar B
+`
+  t.is(importSchema('fixtures/scalar/a.graphql'), expectedSDL)
+})
+
 test('importSchema: interfaces', t => {
   const expectedSDL = `\
 type A implements B {
@@ -117,6 +147,11 @@ type A implements B {
 
 interface B {
   second: Float
+  c: [C!]!
+}
+
+type C {
+  c: ID!
 }
 `
   t.is(importSchema('fixtures/interfaces/a.graphql'), expectedSDL)
