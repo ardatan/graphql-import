@@ -157,6 +157,23 @@ type C {
   t.is(importSchema('fixtures/interfaces/a.graphql'), expectedSDL)
 })
 
+test('importSchema: interfaces-implements', t => {
+  const expectedSDL = `\
+type A implements B {
+  id: ID!
+}
+
+interface B {
+  id: ID!
+}
+
+type B1 implements B {
+  id: ID!
+}
+`
+  t.is(importSchema('fixtures/interfaces-implements/a.graphql'), expectedSDL)
+})
+
 test('importSchema: input types', t => {
   const expectedSDL = `\
 type A {

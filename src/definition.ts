@@ -29,6 +29,7 @@ export function completeDefinitionPool(
     }
 
     const collectedTypedDefinitions = collectNewTypeDefinitions(
+      allDefinitions,
       defintionPool,
       newDefinition,
       schemaMap,
@@ -44,6 +45,7 @@ export function completeDefinitionPool(
 }
 
 function collectNewTypeDefinitions(
+  allDefinitions: TypeDefinitionNode[],
   definitionPool: TypeDefinitionNode[],
   newDefinition: TypeDefinitionNode,
   schemaMap: DefinitionMap,
@@ -75,6 +77,7 @@ function collectNewTypeDefinitions(
   }
 
   if (newDefinition.kind === 'InterfaceTypeDefinition') {
+    const interfaceName = newDefinition.name.value
     newDefinition.fields.forEach(field => {
       const namedType = getNamedType(field.type)
       const typeName = namedType.name.value
@@ -93,6 +96,13 @@ function collectNewTypeDefinitions(
         newTypeDefinitions.push(schemaType)
       }
     })
+
+    const interfaceImplementations = allDefinitions.filter(
+      d =>
+        d.kind === 'ObjectTypeDefinition' &&
+        d.interfaces.some(i => i.name.value === interfaceName),
+    )
+    newTypeDefinitions.push(...interfaceImplementations)
   }
 
   if (newDefinition.kind === 'UnionTypeDefinition') {
