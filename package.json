@@ -17,10 +17,7 @@
     "test-only": "npm run build && ava --verbose dist/**/*.test.js",
     "test": "tslint src/**/*.ts && npm run test-only",
     "docs": "typedoc --out docs src/index.ts --hideGenerator --exclude **/*.test.ts",
-    "docs:publish": "now --public && now alias && now rm --yes --safe graphql-import"
-  },
-  "now": {
-    "alias": "graphql-import"
+    "docs:publish": "cp ./now.json ./docs && cd docs && now --public -f && now alias && now rm --yes --safe graphql-import & cd .."
   },
   "devDependencies": {
     "@types/node": "^8.0.53",

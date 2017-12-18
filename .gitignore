@@ -4,3 +4,4 @@ dist
 package-lock.json
 *.log
 yarn.lock
+docs/now.json
