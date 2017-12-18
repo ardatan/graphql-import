@@ -164,14 +164,14 @@ function collectNewTypeDefinitions(
         !builtinTypes.includes(typeName)
       ) {
         const schemaType = schemaMap[typeName] as ObjectTypeDefinitionNode
-        if (!schemaType) {
-          throw new Error(
-            `Field ${field.name.value}: Couldn't find type ${typeName} in ${
-              schemaPath
-            }.`,
-          )
+        if (schemaType) {
+          newTypeDefinitions.push(schemaType)
+          // throw new Error(
+          //   `Field ${field.name.value}: Couldn't find type ${typeName} in ${
+          //     schemaPath
+          //   }.`,
+          // )
         }
-        newTypeDefinitions.push(schemaType)
       }
     })
   }

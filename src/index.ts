@@ -46,7 +46,9 @@ export function collectDefinitions(
   imports: string[],
   sdl: string,
   filePath: string,
+  processedFiles: Set<string> = new Set()
 ): TypeDefinitionNode[] {
+  processedFiles.add(path.basename(filePath))
   const dirname = path.dirname(filePath)
   const rawModules = parseSDL(sdl)
   const document = parse(sdl)
@@ -54,7 +56,11 @@ export function collectDefinitions(
   const importedTypeDefinitions = flatten(
     rawModules.map(m => {
       const moduleFilePath = path.resolve(path.join(dirname, m.from))
-      return collectDefinitions(m.imports, read(moduleFilePath), moduleFilePath)
+      if (!processedFiles.has(path.basename(m.from))) {
+        return collectDefinitions(m.imports, read(moduleFilePath), moduleFilePath, processedFiles)
+      } else {
+        return []
+      }
     }),
   )
   const typeDefinitions = currentTypeDefinitions.concat(importedTypeDefinitions)

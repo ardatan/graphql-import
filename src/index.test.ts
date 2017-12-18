@@ -197,3 +197,39 @@ test('importSchema: complex test', t => {
     importSchema('fixtures/complex/a.graphql')
   })
 })
+
+test('circular imports', t => {
+  const expectedSDL = `\
+type A {
+  first: String @first
+  second: Float
+  b: B
+}
+
+type B {
+  hello: String!
+  c1: C1
+  c2: C2
+  a: A
+}
+
+type C1 {
+  id: ID!
+}
+
+type C2 {
+  id: ID!
+}
+
+type C3 {
+  id: ID!
+}
+
+type C4 {
+  b: B
+}
+`
+  const actualSDL = importSchema('fixtures/circular/a.graphql')
+  // console.log(actualSDL)
+  t.is(actualSDL, expectedSDL)
+})
