@@ -34,15 +34,25 @@ export function parseSDL(sdl: string): RawModule[] {
     .map(parseImportLine)
 }
 
+function sortErrors(errors) {
+  return errors.sort((a, b) => {
+    return a.locations[0].line - b.locations[0].line
+  })
+}
+
 export function importSchema(filePath: string): string {
   const sdl = read(filePath)
-  const document = parse(sdl)
+  const document = parse(sdl, { noLocation: true })
 
-  let { allDefinitions, typeDefinitions } = collectDefinitions(['*'], sdl, path.resolve(filePath))
+  let { allDefinitions, typeDefinitions } = collectDefinitions(
+    ['*'],
+    sdl,
+    path.resolve(filePath)
+  )
 
   document.definitions = completeDefinitionPool(
     flatten(allDefinitions),
-    flatten(typeDefinitions),
+    typeDefinitions[0],
     flatten(typeDefinitions),
     'any of the schemas'
   )
@@ -56,9 +66,11 @@ function collectDefinitions(
   filePath: string,
   processedFiles: Set<string> = new Set(),
   typeDefinitions: TypeDefinitionNode[][] = [],
-  allDefinitions: TypeDefinitionNode[][] = [],
-): { allDefinitions: TypeDefinitionNode[][], typeDefinitions: TypeDefinitionNode[][]} {
-
+  allDefinitions: TypeDefinitionNode[][] = []
+): {
+  allDefinitions: TypeDefinitionNode[][]
+  typeDefinitions: TypeDefinitionNode[][]
+} {
   const key = path.basename(filePath)
   const dirname = path.dirname(filePath)
 
@@ -69,7 +81,10 @@ function collectDefinitions(
   allDefinitions.push(filterTypeDefinitions(document.definitions))
 
   // Filter TypeDefinitionNodes by type and defined imports
-  const currentTypeDefinitions = filterImportedDefinitions(imports, document.definitions)
+  const currentTypeDefinitions = filterImportedDefinitions(
+    imports,
+    document.definitions
+  )
 
   // Add typedefinitions to running total
   typeDefinitions.push(currentTypeDefinitions)
@@ -85,7 +100,14 @@ function collectDefinitions(
     // If it was not yet processed (in case of circular dependencies)
     if (!processedFiles.has(path.basename(m.from))) {
       const moduleFilePath = path.resolve(path.join(dirname, m.from))
-      collectDefinitions(m.imports, read(moduleFilePath), moduleFilePath, processedFiles, allDefinitions, typeDefinitions)
+      collectDefinitions(
+        m.imports,
+        read(moduleFilePath),
+        moduleFilePath,
+        processedFiles,
+        typeDefinitions,
+        allDefinitions
+      )
     }
   })
 
@@ -101,14 +123,12 @@ function filterImportedDefinitions(
   if (imports.includes('*')) {
     return filteredDefinitions
   } else {
-    return filteredDefinitions.filter(d =>
-      imports.includes(d.name.value)
-    )
+    return filteredDefinitions.filter(d => imports.includes(d.name.value))
   }
 }
 
 function filterTypeDefinitions(
-  definitions: DefinitionNode[],
+  definitions: DefinitionNode[]
 ): TypeDefinitionNode[] {
   const validKinds = [
     'ScalarTypeDefinition',
@@ -116,7 +136,7 @@ function filterTypeDefinitions(
     'InterfaceTypeDefinition',
     'EnumTypeDefinition',
     'UnionTypeDefinition',
-    'InputObjectTypeDefinition',
+    'InputObjectTypeDefinition'
   ]
   return definitions
     .filter(d => validKinds.includes(d.kind))
