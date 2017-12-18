@@ -85,7 +85,7 @@ function collectDefinitions(
     // If it was not yet processed (in case of circular dependencies)
     if (!processedFiles.has(path.basename(m.from))) {
       const moduleFilePath = path.resolve(path.join(dirname, m.from))
-      collectDefinitions(m.imports, read(moduleFilePath), moduleFilePath, processedFiles, allDefinitions, typeDefinitions)
+      collectDefinitions(m.imports, read(moduleFilePath), moduleFilePath, processedFiles, typeDefinitions, allDefinitions)
     }
   })
 
