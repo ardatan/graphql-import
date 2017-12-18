@@ -220,16 +220,28 @@ type C1 {
 type C2 {
   id: ID!
 }
-
-type C3 {
-  id: ID!
-}
-
-type C4 {
-  b: B
-}
 `
   const actualSDL = importSchema('fixtures/circular/a.graphql')
-  // console.log(actualSDL)
+  t.is(actualSDL, expectedSDL)
+})
+
+test('related types', t => {
+  const expectedSDL = `\
+type A {
+  first: String @first
+  second: Float
+  b: B
+}
+
+type B {
+  hello: String!
+  c1: C
+}
+
+type C {
+  field: String
+}
+`
+  const actualSDL = importSchema('fixtures/related-types/a.graphql')
   t.is(actualSDL, expectedSDL)
 })

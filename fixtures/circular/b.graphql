@@ -1,4 +1,4 @@
-# import * from 'c.graphql'
+# import C1, C2 from 'c.graphql'
 # import * from 'a.graphql'
 
 type B {

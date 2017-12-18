@@ -1,7 +1,8 @@
-import { TypeDefinitionNode, DefinitionNode, parse, print } from 'graphql'
-import { flatten } from 'lodash'
 import * as fs from 'fs'
+import { DefinitionNode, parse, print, TypeDefinitionNode } from 'graphql'
+import { flatten } from 'lodash'
 import * as path from 'path'
+
 import { completeDefinitionPool } from './definition'
 
 export interface RawModule {
@@ -37,65 +38,71 @@ export function importSchema(filePath: string): string {
   const sdl = read(filePath)
   const document = parse(sdl)
 
-  const allDefinitions = collectDefinitions(['*'], sdl, path.resolve(filePath))
-  document.definitions = allDefinitions
+  let { allDefinitions, typeDefinitions } = collectDefinitions(['*'], sdl, path.resolve(filePath))
+
+  document.definitions = completeDefinitionPool(
+    flatten(allDefinitions),
+    flatten(typeDefinitions),
+    flatten(typeDefinitions),
+    'any of the schemas'
+  )
+
   return print(document)
 }
 
-export function collectDefinitions(
+function collectDefinitions(
   imports: string[],
   sdl: string,
   filePath: string,
-  processedFiles: Set<string> = new Set()
-): TypeDefinitionNode[] {
-  processedFiles.add(path.basename(filePath))
+  processedFiles: Set<string> = new Set(),
+  typeDefinitions: TypeDefinitionNode[][] = [],
+  allDefinitions: TypeDefinitionNode[][] = [],
+): { allDefinitions: TypeDefinitionNode[][], typeDefinitions: TypeDefinitionNode[][]} {
+
+  const key = path.basename(filePath)
   const dirname = path.dirname(filePath)
-  const rawModules = parseSDL(sdl)
+
+  // Get TypeDefinitionNodes from current schema
   const document = parse(sdl)
-  const currentTypeDefinitions = filterTypeDefinitions(document.definitions)
-  const importedTypeDefinitions = flatten(
-    rawModules.map(m => {
+
+  // Add all definitions to running total
+  allDefinitions.push(filterTypeDefinitions(document.definitions))
+
+  // Filter TypeDefinitionNodes by type and defined imports
+  const currentTypeDefinitions = filterImportedDefinitions(imports, document.definitions)
+
+  // Add typedefinitions to running total
+  typeDefinitions.push(currentTypeDefinitions)
+
+  // Mark file as processed (for circular dependency cases)
+  processedFiles.add(key)
+
+  // Read imports from current file
+  const rawModules = parseSDL(sdl)
+
+  // Process each file (recursively)
+  rawModules.forEach(m => {
+    // If it was not yet processed (in case of circular dependencies)
+    if (!processedFiles.has(path.basename(m.from))) {
       const moduleFilePath = path.resolve(path.join(dirname, m.from))
-      if (!processedFiles.has(path.basename(m.from))) {
-        return collectDefinitions(m.imports, read(moduleFilePath), moduleFilePath, processedFiles)
-      } else {
-        return []
-      }
-    }),
-  )
-  const typeDefinitions = currentTypeDefinitions.concat(importedTypeDefinitions)
+      collectDefinitions(m.imports, read(moduleFilePath), moduleFilePath, processedFiles, allDefinitions, typeDefinitions)
+    }
+  })
 
-  const filteredTypeDefinitions = importDefinitions(
-    imports,
-    typeDefinitions,
-    filePath,
-  )
-
-  return completeDefinitionPool(
-    typeDefinitions,
-    filteredTypeDefinitions.slice(0),
-    filteredTypeDefinitions.slice(0),
-    filePath,
-  )
+  // Return the maps of type definitions from each file
+  return { allDefinitions, typeDefinitions }
 }
 
-function importDefinitions(
+function filterImportedDefinitions(
   imports: string[],
-  typeDefinitions: TypeDefinitionNode[],
-  schemaPath: string, // needed for better debugging output
+  typeDefinitions: DefinitionNode[]
 ): TypeDefinitionNode[] {
+  const filteredDefinitions = filterTypeDefinitions(typeDefinitions)
   if (imports.includes('*')) {
-    return typeDefinitions
+    return filteredDefinitions
   } else {
-    const importedDefinitions = typeDefinitions.filter(d =>
-      imports.includes(d.name.value),
-    )
-
-    return completeDefinitionPool(
-      typeDefinitions,
-      importedDefinitions.slice(0),
-      importedDefinitions.slice(0),
-      schemaPath,
+    return filteredDefinitions.filter(d =>
+      imports.includes(d.name.value)
     )
   }
 }
