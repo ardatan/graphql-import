@@ -14,11 +14,19 @@ export interface DefinitionMap {
   [key: string]: TypeDefinitionNode
 }
 
+/**
+ * Post processing of all imported type definitions. Loops over each of the
+ * imported type definitions, and processes it using collectNewTypeDefinitions.
+ *
+ * @param allDefinitions All definitions from all schemas
+ * @param definitionPool Current definitions (from first schema)
+ * @param newTypeDefinitions All imported definitions
+ * @returns Final collection of type definitions for the resulting schema
+ */
 export function completeDefinitionPool(
   allDefinitions: TypeDefinitionNode[],
-  defintionPool: TypeDefinitionNode[],
+  definitionPool: TypeDefinitionNode[],
   newTypeDefinitions: TypeDefinitionNode[],
-  schemaPath: string,
 ): TypeDefinitionNode[] {
   const visitedDefinitions: { [name: string]: boolean } = {}
   while (newTypeDefinitions.length > 0) {
@@ -30,26 +38,37 @@ export function completeDefinitionPool(
 
     const collectedTypedDefinitions = collectNewTypeDefinitions(
       allDefinitions,
-      defintionPool,
+      definitionPool,
       newDefinition,
       schemaMap,
-      schemaPath,
     )
     newTypeDefinitions.push(...collectedTypedDefinitions)
-    defintionPool.push(...collectedTypedDefinitions)
+    definitionPool.push(...collectedTypedDefinitions)
 
     visitedDefinitions[newDefinition.name.value] = true
   }
 
-  return uniqBy(defintionPool, 'name.value')
+  return uniqBy(definitionPool, 'name.value')
 }
 
+/**
+ * Processes a single type definition, and performs a number of checks:
+ * - Add missing interface implementations
+ * - Add missing referenced types
+ * - Remove unused type definitions
+ *
+ * @param allDefinitions All definitions from all schemas
+ * (only used to find missing interface implementations)
+ * @param definitionPool Resulting definitions
+ * @param newDefinition All imported definitions
+ * @param schemaMap Map of all definitions for easy lookup
+ * @returns All relevant type definitions to add to the final schema
+ */
 function collectNewTypeDefinitions(
   allDefinitions: TypeDefinitionNode[],
   definitionPool: TypeDefinitionNode[],
   newDefinition: TypeDefinitionNode,
   schemaMap: DefinitionMap,
-  schemaPath: string,
 ): TypeDefinitionNode[] {
   let newTypeDefinitions: TypeDefinitionNode[] = []
 
@@ -66,9 +85,7 @@ function collectNewTypeDefinitions(
         const argTypeMatch = schemaMap[typeName]
         if (!argTypeMatch) {
           throw new Error(
-            `Field ${field.name.value}: Couldn't find type ${typeName} in ${
-              schemaPath
-            }.`,
+            `Field ${field.name.value}: Couldn't find type ${typeName} in any of the schemas.`,
           )
         }
         newTypeDefinitions.push(argTypeMatch)
@@ -88,9 +105,7 @@ function collectNewTypeDefinitions(
         const schemaType = schemaMap[typeName] as ObjectTypeDefinitionNode
         if (!schemaType) {
           throw new Error(
-            `Field ${field.name.value}: Couldn't find type ${typeName} in ${
-              schemaPath
-            }.`,
+            `Field ${field.name.value}: Couldn't find type ${typeName} in any of the schemas.`,
           )
         }
         newTypeDefinitions.push(schemaType)
@@ -111,7 +126,7 @@ function collectNewTypeDefinitions(
         const typeName = type.name.value
         const typeMatch = schemaMap[typeName]
         if (!typeMatch) {
-          throw new Error(`Couldn't find type ${typeName} in ${schemaPath}.`)
+          throw new Error(`Couldn't find type ${typeName} in any of the schemas.`)
         }
         newTypeDefinitions.push(schemaMap[type.name.value])
       }
@@ -126,7 +141,7 @@ function collectNewTypeDefinitions(
         const interfaceMatch = schemaMap[interfaceName]
         if (!interfaceMatch) {
           throw new Error(
-            `Couldn't find interface ${interfaceName} in ${schemaPath}.`,
+            `Couldn't find interface ${interfaceName} in any of the schemas.`,
           )
         }
         newTypeDefinitions.push(schemaMap[int.name.value])
@@ -151,7 +166,7 @@ function collectNewTypeDefinitions(
             throw new Error(
               `Field ${field.name.value}: Couldn't find type ${
                 argTypeName
-              } in ${schemaPath}.`,
+              } in any of the schemas.`,
             )
           }
           newTypeDefinitions.push(argTypeMatch)
@@ -166,9 +181,7 @@ function collectNewTypeDefinitions(
         const schemaType = schemaMap[typeName] as ObjectTypeDefinitionNode
         if (!schemaType) {
           throw new Error(
-            `Field ${field.name.value}: Couldn't find type ${typeName} in ${
-              schemaPath
-            }.`,
+            `Field ${field.name.value}: Couldn't find type ${typeName} in any of the schemas.`,
           )
         }
         newTypeDefinitions.push(schemaType)
@@ -179,6 +192,12 @@ function collectNewTypeDefinitions(
   return newTypeDefinitions
 }
 
+/**
+ * Nested visitor for a type node to get to the final NamedType
+ *
+ * @param {TypeNode} type Type node to get NamedTypeNode for
+ * @returns {NamedTypeNode} The found NamedTypeNode
+ */
 function getNamedType(type: TypeNode): NamedTypeNode {
   if (type.kind === 'NamedType') {
     return type

@@ -15,13 +15,19 @@
     "prepublish": "npm run build",
     "build": "rm -rf dist && tsc -d",
     "test-only": "npm run build && ava --verbose dist/**/*.test.js",
-    "test": "tslint src/**/*.ts && npm run test-only"
+    "test": "tslint src/**/*.ts && npm run test-only",
+    "docs": "typedoc --out docs src/index.ts --hideGenerator --exclude **/*.test.ts",
+    "docs:publish": "now --public && now alias && now rm --yes --safe graphql-import"
+  },
+  "now": {
+    "alias": "graphql-import"
   },
   "devDependencies": {
     "@types/node": "^8.0.53",
     "ava": "^0.24.0",
     "tslint": "^5.8.0",
     "tslint-config-standard": "^7.0.0",
+    "typedoc": "^0.9.0",
     "typescript": "^2.6.1"
   },
   "dependencies": {
