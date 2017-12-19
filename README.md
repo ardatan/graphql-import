@@ -84,6 +84,10 @@ type C {
 
 Please refer to [`src/index.test.ts`](src/index.test.ts) for more examples.
 
+## Development
+
+The [implemenentation documentation](https://graphql-import.now.sh/) documents how things are implemented under the hood. You can also use the VSCode test setup to debug your code/tests.
+
 ## Related topics & next steps
 
 - Static import step as build time
