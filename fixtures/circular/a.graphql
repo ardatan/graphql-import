@@ -1,0 +1,7 @@
+# import * from "b.graphql"
+
+type A {
+  first: String @first
+  second: Float
+  b: B
+}
