@@ -113,7 +113,7 @@ function collectDefinitions(
   allDefinitions: TypeDefinitionNode[][]
   typeDefinitions: TypeDefinitionNode[][]
 } {
-  const key = path.basename(filePath)
+  const key = path.resolve(filePath)
   const dirname = path.dirname(filePath)
 
   // Get TypeDefinitionNodes from current schema
@@ -140,8 +140,8 @@ function collectDefinitions(
   // Process each file (recursively)
   rawModules.forEach(m => {
     // If it was not yet processed (in case of circular dependencies)
-    if (!processedFiles.has(path.basename(m.from))) {
-      const moduleFilePath = path.resolve(path.join(dirname, m.from))
+    const moduleFilePath = path.resolve(path.join(dirname, m.from))
+    if (!processedFiles.has(moduleFilePath)) {
       collectDefinitions(
         m.imports,
         read(moduleFilePath),

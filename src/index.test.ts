@@ -245,3 +245,29 @@ type C {
   const actualSDL = importSchema('fixtures/related-types/a.graphql')
   t.is(actualSDL, expectedSDL)
 })
+
+test('relative paths', t => {
+  const expectedSDL = `\
+type Query {
+  feed: [Post!]!
+}
+
+type Mutation {
+  createDraft(title: String!, text: String): Post
+  publish(id: ID!): Post
+}
+
+type Post implements Node {
+  id: ID!
+  isPublished: Boolean!
+  title: String!
+  text: String!
+}
+
+interface Node {
+  id: ID!
+}
+`
+  const actualSDL = importSchema('fixtures/relative-paths/src/schema.graphql')
+  t.is(actualSDL, expectedSDL)
+})
