@@ -11,9 +11,6 @@
   "typescript": {
     "definition": "dist/index.d.ts"
   },
-  "now": {
-    "alias": "graphql-import"
-  },
   "scripts": {
     "prepublish": "npm run build",
     "build": "rm -rf dist && tsc -d",
