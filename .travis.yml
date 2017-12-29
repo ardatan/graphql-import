@@ -1,5 +1,19 @@
 language: node_js
 node_js:
-  - node
+  - '9'
+  - '8'
+  - '6'
+
+after_success:
+  - npm i -g semantic-release
+  - semantic-release
+  - yarn docs
+  # needs proper NOW setup first
+  # - yarn docs:publish
+
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
+
 notifications:
   email: false

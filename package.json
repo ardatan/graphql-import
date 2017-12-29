@@ -1,6 +1,6 @@
 {
   "name": "graphql-import",
-  "version": "0.1.8",
+  "version": "0.0.0-semantic-release",
   "license": "MIT",
   "repository": "git@github.com:graphcool/graphql-import.git",
   "files": [
@@ -12,7 +12,7 @@
     "definition": "dist/index.d.ts"
   },
   "scripts": {
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "build": "rm -rf dist && tsc -d",
     "test-only": "npm run build && ava --verbose dist/**/*.test.js",
     "test": "tslint src/**/*.ts && npm run test-only",
