@@ -1,6 +1,7 @@
 # graphql-import
 
-[![Build Status](https://travis-ci.org/graphcool/graphql-import.svg?branch=master)](https://travis-ci.org/graphcool/graphql-import) [![npm version](https://badge.fury.io/js/graphql-import.svg)](https://badge.fury.io/js/graphql-import)
+[![CircleCI](https://circleci.com/gh/graphcool/graphql-import.svg?style=shield)](https://circleci.com/gh/graphcool/graphql-import) [![npm version](https://badge.fury.io/js/graphql-import.svg)](https://badge.fury.io/js/graphql-import)
+
 
 Import &amp; export definitions in GraphQL SDL (also refered to as GraphQL modules)
 
