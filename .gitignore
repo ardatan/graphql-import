@@ -5,3 +5,6 @@ package-lock.json
 *.log
 yarn.lock
 docs/now.json
+reports
+.nyc_output
+coverage

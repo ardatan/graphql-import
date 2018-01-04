@@ -1,0 +1,9 @@
+# import Query.* from 'b.graphql'
+
+type Query {
+    helloA: String
+}
+
+type Dummy {
+    field: String
+}

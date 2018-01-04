@@ -1,6 +1,6 @@
 import * as fs from 'fs'
-import { DefinitionNode, parse, print, TypeDefinitionNode } from 'graphql'
-import { flatten } from 'lodash'
+import { DefinitionNode, parse, print, TypeDefinitionNode, GraphQLObjectType, ObjectTypeDefinitionNode } from 'graphql'
+import { flatten, groupBy } from 'lodash'
 import * as path from 'path'
 
 import { completeDefinitionPool } from './definition'
@@ -32,7 +32,7 @@ const read: (f: string) => string =
 export function parseImportLine(importLine: string): RawModule {
   // Apply regex to import line
   const matches = importLine.match(/^import (\*|(.*)) from ('|")(.*)('|")$/)
-  if (matches.length !== 6) {
+  if (!matches || matches.length !== 6 || !matches[4]) {
     throw new Error(`Too few regex matches: ${matches}`)
   }
 
@@ -80,9 +80,28 @@ export function importSchema(filePath: string): string {
   )
 
   // Post processing of the final schema (missing types, unused types, etc.)
+  // Query, Mutation and Subscription should be merged
+  // And should always be in the first set, to make sure they
+  // are not filtered out.
+  const typesToFilter = ['Query', 'Mutation', 'Subscription']
+  const firstTypes = flatten(typeDefinitions).filter(d => typesToFilter.includes(d.name.value))
+  const otherFirstTypes = typeDefinitions[0].filter(d => !typesToFilter.includes(d.name.value))
+  const firstSet = otherFirstTypes.concat(firstTypes)
+  const processedTypeNames = []
+  const mergedFirstTypes = []
+  for (const type of firstSet) {
+    if (!processedTypeNames.includes(type.name.value)) {
+      processedTypeNames.push(type.name.value)
+      mergedFirstTypes.push(type)
+    } else {
+      const existingType = mergedFirstTypes.find(t => t.name.value === type.name.value)
+      existingType.fields = existingType.fields.concat((type as ObjectTypeDefinitionNode).fields)
+    }
+  }
+
   document.definitions = completeDefinitionPool(
     flatten(allDefinitions),
-    typeDefinitions[0],
+    firstSet,
     flatten(typeDefinitions),
   )
 
@@ -169,11 +188,27 @@ function filterImportedDefinitions(
   imports: string[],
   typeDefinitions: DefinitionNode[]
 ): TypeDefinitionNode[] {
+
+  // This should do something smart with fields
+
   const filteredDefinitions = filterTypeDefinitions(typeDefinitions)
+
   if (imports.includes('*')) {
     return filteredDefinitions
   } else {
-    return filteredDefinitions.filter(d => imports.includes(d.name.value))
+    const result = filteredDefinitions.filter(d => imports.map(i => i.split('.')[0]).includes(d.name.value))
+    const fieldImports = imports
+      .filter(i => i.split('.').length > 1)
+    const groupedFieldImports = groupBy(fieldImports, x => x.split('.')[0])
+
+    for (const rootType in groupedFieldImports) {
+      const fields = groupedFieldImports[rootType].map(x => x.split('.')[1]);
+      (filteredDefinitions.find(def => def.name.value === rootType) as ObjectTypeDefinitionNode).fields =
+        (filteredDefinitions.find(def => def.name.value === rootType) as ObjectTypeDefinitionNode).fields
+          .filter(f => fields.includes(f.name.value) || fields.includes('*'))
+    }
+
+    return result
   }
 }
 
