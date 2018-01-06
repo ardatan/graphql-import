@@ -116,6 +116,166 @@ type C2 {
   t.is(importSchema('fixtures/import-all/a.graphql'), expectedSDL)
 })
 
+test('importSchema: import all from objects', t => {
+  const schemaC = `
+    type C1 {
+      id: ID!
+    }
+
+    type C2 {
+      id: ID!
+    }
+
+    type C3 {
+      id: ID!
+    }`
+
+  const schemaB = `
+    # import * from 'schemaC'
+
+    type B {
+      hello: String!
+      c1: C1
+      c2: C2
+    }`
+
+  const schemaA = `
+    # import B from 'schemaB'
+
+    type A {
+      # test 1
+      first: String @first
+      second: Float
+      b: B
+    }`
+
+  const schemas = {
+    schemaA, schemaB, schemaC
+  }
+
+  const expectedSDL = `\
+type A {
+  first: String @first
+  second: Float
+  b: B
+}
+
+type B {
+  hello: String!
+  c1: C1
+  c2: C2
+}
+
+type C1 {
+  id: ID!
+}
+
+type C2 {
+  id: ID!
+}
+`
+  t.is(importSchema(schemaA, schemas), expectedSDL)
+})
+
+test(`importSchema: single object schema`, t => {
+  const schemaA = `
+    type A {
+      field: String
+    }`
+
+  const expectedSDL = `\
+type A {
+  field: String
+}
+`
+
+  t.is(importSchema(schemaA), expectedSDL)
+})
+
+test(`importSchema: import all mix 'n match`, t => {
+  const schemaB = `
+    # import C1, C2 from 'fixtures/import-all/c.graphql'
+
+    type B {
+      hello: String!
+      c1: C1
+      c2: C2
+    }`
+
+  const schemaA = `
+    # import * from "schemaB"
+
+    type A {
+      # test 1
+      first: String @first
+      second: Float
+      b: B
+    }`
+
+  const schemas = {
+    schemaB
+  }
+
+  const expectedSDL = `\
+type A {
+  first: String @first
+  second: Float
+  b: B
+}
+
+type B {
+  hello: String!
+  c1: C1
+  c2: C2
+}
+
+type C1 {
+  id: ID!
+}
+
+type C2 {
+  id: ID!
+}
+`
+  t.is(importSchema(schemaA, schemas), expectedSDL)
+})
+
+test(`importSchema: import all mix 'n match 2`, t => {
+
+  const schemaA = `
+    # import * from "fixtures/import-all/b.graphql"
+
+    type A {
+      # test 1
+      first: String @first
+      second: Float
+      b: B
+    }`
+
+  const expectedSDL = `\
+type A {
+  first: String @first
+  second: Float
+  b: B
+}
+
+type B {
+  hello: String!
+  c1: C1
+  c2: C2
+}
+
+type C1 {
+  id: ID!
+}
+
+type C2 {
+  id: ID!
+}
+`
+  t.is(importSchema(schemaA), expectedSDL)
+})
+
 test('importSchema: unions', t => {
   const expectedSDL = `\
 type A {

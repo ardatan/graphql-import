@@ -14,14 +14,14 @@ export interface RawModule {
   from: string
 }
 
-/**
- * Read a schema file from disk
- *
- * @param f Filename
- * @returns File contents
- */
-const read: (f: string) => string =
-  (f: string): string => fs.readFileSync(f, { encoding: 'utf8' })
+const read = (schema: string, schemas?: { [key: string]: string }) => {
+  if (isFile(schema)) {
+    return fs.readFileSync(schema, { encoding: 'utf8' })
+  }
+  return schemas ? schemas[schema] : schema
+}
+
+const isFile = f => f.endsWith('.graphql')
 
 /**
  * Parse a single import line and extract imported types and schema filename
@@ -68,15 +68,16 @@ export function parseSDL(sdl: string): RawModule[] {
  * @param filePath File path to the initial schema file
  * @returns Single bundled schema with all imported types
  */
-export function importSchema(filePath: string): string {
-  const sdl = read(filePath)
+export function importSchema(schema: string, schemas?: { [key: string]: string }): string {
+  const sdl = read(schema, schemas) || schema
   const document = parse(sdl, { noLocation: true })
 
   // Recursively process the imports, starting by importing all types from the initial schema
   let { allDefinitions, typeDefinitions } = collectDefinitions(
     ['*'],
     sdl,
-    path.resolve(filePath)
+    schema,
+    schemas
   )
 
   // Post processing of the final schema (missing types, unused types, etc.)
@@ -125,6 +126,7 @@ function collectDefinitions(
   imports: string[],
   sdl: string,
   filePath: string,
+  schemas?: { [key: string]: string },
   processedFiles: Set<string> = new Set(),
   typeDefinitions: TypeDefinitionNode[][] = [],
   allDefinitions: TypeDefinitionNode[][] = []
@@ -132,7 +134,7 @@ function collectDefinitions(
   allDefinitions: TypeDefinitionNode[][]
   typeDefinitions: TypeDefinitionNode[][]
 } {
-  const key = path.resolve(filePath)
+  const key = isFile(filePath) ? path.resolve(filePath) : filePath
   const dirname = path.dirname(filePath)
 
   // Get TypeDefinitionNodes from current schema
@@ -159,12 +161,13 @@ function collectDefinitions(
   // Process each file (recursively)
   rawModules.forEach(m => {
     // If it was not yet processed (in case of circular dependencies)
-    const moduleFilePath = path.resolve(path.join(dirname, m.from))
+    const moduleFilePath = isFile(filePath) ? path.resolve(path.join(dirname, m.from)) : m.from
     if (!processedFiles.has(moduleFilePath)) {
       collectDefinitions(
         m.imports,
-        read(moduleFilePath),
+        read(moduleFilePath, schemas),
         moduleFilePath,
+        schemas,
         processedFiles,
         typeDefinitions,
         allDefinitions
