@@ -225,6 +225,7 @@ function filterTypeDefinitions(
   definitions: DefinitionNode[]
 ): TypeDefinitionNode[] {
   const validKinds = [
+    'DirectiveDefinition',
     'ScalarTypeDefinition',
     'ObjectTypeDefinition',
     'InterfaceTypeDefinition',
