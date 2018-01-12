@@ -3,7 +3,10 @@ import { DefinitionNode, parse, print, TypeDefinitionNode, GraphQLObjectType, Ob
 import { flatten, groupBy } from 'lodash'
 import * as path from 'path'
 
-import { completeDefinitionPool } from './definition'
+import {
+  completeDefinitionPool,
+  ValidDefinitionNode,
+} from './definition'
 
 /**
  * Describes the information from a single import line
@@ -128,11 +131,11 @@ function collectDefinitions(
   filePath: string,
   schemas?: { [key: string]: string },
   processedFiles: Set<string> = new Set(),
-  typeDefinitions: TypeDefinitionNode[][] = [],
-  allDefinitions: TypeDefinitionNode[][] = []
+  typeDefinitions: ValidDefinitionNode[][] = [],
+  allDefinitions: ValidDefinitionNode[][] = []
 ): {
-  allDefinitions: TypeDefinitionNode[][]
-  typeDefinitions: TypeDefinitionNode[][]
+  allDefinitions: ValidDefinitionNode[][]
+  typeDefinitions: ValidDefinitionNode[][]
 } {
   const key = isFile(filePath) ? path.resolve(filePath) : filePath
   const dirname = path.dirname(filePath)
@@ -190,7 +193,7 @@ function collectDefinitions(
 function filterImportedDefinitions(
   imports: string[],
   typeDefinitions: DefinitionNode[]
-): TypeDefinitionNode[] {
+): ValidDefinitionNode[] {
 
   // This should do something smart with fields
 
@@ -223,7 +226,7 @@ function filterImportedDefinitions(
  */
 function filterTypeDefinitions(
   definitions: DefinitionNode[]
-): TypeDefinitionNode[] {
+): ValidDefinitionNode[] {
   const validKinds = [
     'DirectiveDefinition',
     'ScalarTypeDefinition',
@@ -235,5 +238,5 @@ function filterTypeDefinitions(
   ]
   return definitions
     .filter(d => validKinds.includes(d.kind))
-    .map(d => d as TypeDefinitionNode)
+    .map(d => d as ValidDefinitionNode)
 }

@@ -2,7 +2,7 @@
 
 type A {
   # test 1
-  first: String @first
+  first: String
   second: Float
   b: B
 }

@@ -2,6 +2,6 @@
 
 type A implements B {
   # test 1
-  first: String @first
+  first: String
   second: Float
 }

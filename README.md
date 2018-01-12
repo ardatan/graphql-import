@@ -41,7 +41,7 @@ Assume the following directory structure:
 
 type A {
   # test 1
-  first: String @first
+  first: String
   second: Float
   b: B
 }
@@ -70,7 +70,7 @@ Running `console.log(importSchema('a.graphql'))` procudes the following output:
 
 ```graphql
 type A {
-  first: String @first
+  first: String
   second: Float
   b: B
 }

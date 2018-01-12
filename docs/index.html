@@ -90,7 +90,7 @@
 
 type A {
   # test 1
-  first: String @first
+  first: String
   second: Float
   b: B
 }
@@ -110,7 +110,7 @@ type B {
 </code></pre>
 				<p>Running <code>console.log(importSchema(&#39;a.graphql&#39;))</code> procudes the following output:</p>
 				<pre><code class="lang-graphql">type A {
-  first: String @first
+  first: String
   second: Float
   b: B
 }

@@ -57,7 +57,7 @@ test('parse: multi line import', t => {
 test('importSchema: field types', t => {
   const expectedSDL = `\
 type A {
-  first: String @first
+  first: String
   second: Float
   b: B
 }
@@ -77,7 +77,7 @@ type C {
 test('importSchema: enums', t => {
   const expectedSDL = `\
 type A {
-  first: String @first
+  first: String
   second: Float
   b: B
 }
@@ -94,7 +94,7 @@ enum B {
 test('importSchema: import all', t => {
   const expectedSDL = `\
 type A {
-  first: String @first
+  first: String
   second: Float
   b: B
 }
@@ -144,7 +144,7 @@ test('importSchema: import all from objects', t => {
 
     type A {
       # test 1
-      first: String @first
+      first: String
       second: Float
       b: B
     }`
@@ -155,7 +155,7 @@ test('importSchema: import all from objects', t => {
 
   const expectedSDL = `\
 type A {
-  first: String @first
+  first: String
   second: Float
   b: B
 }
@@ -207,7 +207,7 @@ test(`importSchema: import all mix 'n match`, t => {
 
     type A {
       # test 1
-      first: String @first
+      first: String
       second: Float
       b: B
     }`
@@ -218,7 +218,7 @@ test(`importSchema: import all mix 'n match`, t => {
 
   const expectedSDL = `\
 type A {
-  first: String @first
+  first: String
   second: Float
   b: B
 }
@@ -247,14 +247,14 @@ test(`importSchema: import all mix 'n match 2`, t => {
 
     type A {
       # test 1
-      first: String @first
+      first: String
       second: Float
       b: B
     }`
 
   const expectedSDL = `\
 type A {
-  first: String @first
+  first: String
   second: Float
   b: B
 }
@@ -306,10 +306,26 @@ scalar B
   t.is(importSchema('fixtures/scalar/a.graphql'), expectedSDL)
 })
 
+test('importSchema: directive', t => {
+  const expectedSDL = `\
+type A {
+  first: String @upper
+  second: String @withB @deprecated
+}
+
+directive @upper on FIELD_DEFINITION
+
+scalar B
+
+directive @withB(argB: B) on FIELD_DEFINITION
+`
+  t.is(importSchema('fixtures/directive/a.graphql'), expectedSDL)
+})
+
 test('importSchema: interfaces', t => {
   const expectedSDL = `\
 type A implements B {
-  first: String @first
+  first: String
   second: Float
 }
 
@@ -345,7 +361,7 @@ type B1 implements B {
 test('importSchema: input types', t => {
   const expectedSDL = `\
 type A {
-  first(b: B): String @first
+  first(b: B): String
   second: Float
 }
 
@@ -369,7 +385,7 @@ test('importSchema: complex test', t => {
 test('circular imports', t => {
   const expectedSDL = `\
 type A {
-  first: String @first
+  first: String
   second: Float
   b: B
 }
@@ -396,7 +412,7 @@ type C2 {
 test('related types', t => {
   const expectedSDL = `\
 type A {
-  first: String @first
+  first: String
   second: Float
   b: B
 }
@@ -450,12 +466,12 @@ type Query {
   posts(filter: PostFilter): [Post]
 }
 
-input PostFilter {
-  field3: Int
-}
-
 type Post {
   field1: String
+}
+
+input PostFilter {
+  field3: Int
 }
 `
   const actualSDL = importSchema('fixtures/root-fields/a.graphql')
@@ -474,12 +490,12 @@ type Query {
   hello: String
 }
 
-input PostFilter {
-  field3: Int
-}
-
 type Post {
   field1: String
+}
+
+input PostFilter {
+  field3: Int
 }
 `
   const actualSDL = importSchema('fixtures/merged-root-fields/a.graphql')
@@ -498,7 +514,7 @@ test('missing type on interface', t => {
 
 test('missing type on input type', t => {
   const err = t.throws(() => importSchema('fixtures/type-not-found/c.graphql'), Error)
-  t.is(err.message, `Field myfield: Couldn't find type Post in any of the schemas.`)
+  t.is(err.message, `Field post: Couldn't find type Post in any of the schemas.`)
 })
 
 test('missing interface type', t => {
@@ -514,4 +530,9 @@ test('missing union type', t => {
 test('missing type on input type', t => {
   const err = t.throws(() => importSchema('fixtures/type-not-found/f.graphql'), Error)
   t.is(err.message, `Field myfield: Couldn't find type Post in any of the schemas.`)
+})
+
+test('missing type on directive', t => {
+  const err = t.throws(() => importSchema('fixtures/type-not-found/g.graphql'), Error)
+  t.is(err.message, `Directive first: Couldn't find type first in any of the schemas.`)
 })

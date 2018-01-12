@@ -6,12 +6,22 @@ import {
   InputObjectTypeDefinitionNode,
   TypeNode,
   NamedTypeNode,
+  DirectiveNode,
+  DirectiveDefinitionNode,
+  InputValueDefinitionNode,
+  FieldDefinitionNode,
 } from 'graphql'
 
 const builtinTypes = ['String', 'Float', 'Int', 'Boolean', 'ID']
 
+const builtinDirectives = ['deprecated', 'skip','include']
+
+export type ValidDefinitionNode =
+    | DirectiveDefinitionNode
+    | TypeDefinitionNode
+
 export interface DefinitionMap {
-  [key: string]: TypeDefinitionNode
+  [key: string]: ValidDefinitionNode
 }
 
 /**
@@ -24,10 +34,10 @@ export interface DefinitionMap {
  * @returns Final collection of type definitions for the resulting schema
  */
 export function completeDefinitionPool(
-  allDefinitions: TypeDefinitionNode[],
-  definitionPool: TypeDefinitionNode[],
-  newTypeDefinitions: TypeDefinitionNode[],
-): TypeDefinitionNode[] {
+  allDefinitions: ValidDefinitionNode[],
+  definitionPool: ValidDefinitionNode[],
+  newTypeDefinitions: ValidDefinitionNode[],
+): ValidDefinitionNode[] {
   const visitedDefinitions: { [name: string]: boolean } = {}
   while (newTypeDefinitions.length > 0) {
     const schemaMap: DefinitionMap = keyBy(allDefinitions, d => d.name.value)
@@ -65,52 +75,24 @@ export function completeDefinitionPool(
  * @returns All relevant type definitions to add to the final schema
  */
 function collectNewTypeDefinitions(
-  allDefinitions: TypeDefinitionNode[],
-  definitionPool: TypeDefinitionNode[],
-  newDefinition: TypeDefinitionNode,
+  allDefinitions: ValidDefinitionNode[],
+  definitionPool: ValidDefinitionNode[],
+  newDefinition: ValidDefinitionNode,
   schemaMap: DefinitionMap,
-): TypeDefinitionNode[] {
-  let newTypeDefinitions: TypeDefinitionNode[] = []
+): ValidDefinitionNode[] {
+  let newTypeDefinitions: ValidDefinitionNode[] = []
+
+  if (newDefinition.kind !== 'DirectiveDefinition') {
+    newDefinition.directives.forEach(collectDirective)
+  }
 
   if (newDefinition.kind === 'InputObjectTypeDefinition') {
-    newDefinition.fields.forEach(field => {
-      const namedType = getNamedType(field.type)
-      const typeName = namedType.name.value
-
-      // collect missing argument input types
-      if (
-        !definitionPool.some(d => d.name.value === typeName) &&
-        !builtinTypes.includes(typeName)
-      ) {
-        const argTypeMatch = schemaMap[typeName]
-        if (!argTypeMatch) {
-          throw new Error(
-            `Field ${field.name.value}: Couldn't find type ${typeName} in any of the schemas.`,
-          )
-        }
-        newTypeDefinitions.push(argTypeMatch)
-      }
-    })
+    newDefinition.fields.forEach(collectNode)
   }
 
   if (newDefinition.kind === 'InterfaceTypeDefinition') {
     const interfaceName = newDefinition.name.value
-    newDefinition.fields.forEach(field => {
-      const namedType = getNamedType(field.type)
-      const typeName = namedType.name.value
-      if (
-        !definitionPool.some(d => d.name.value === typeName) &&
-        !builtinTypes.includes(typeName)
-      ) {
-        const schemaType = schemaMap[typeName] as ObjectTypeDefinitionNode
-        if (!schemaType) {
-          throw new Error(
-            `Field ${field.name.value}: Couldn't find type ${typeName} in any of the schemas.`,
-          )
-        }
-        newTypeDefinitions.push(schemaType)
-      }
-    })
+    newDefinition.fields.forEach(collectNode)
 
     const interfaceImplementations = allDefinitions.filter(
       d =>
@@ -150,46 +132,54 @@ function collectNewTypeDefinitions(
 
     // iterate over all fields
     newDefinition.fields.forEach(field => {
-      const namedType = getNamedType(field.type)
-      const typeName = namedType.name.value
-
+      collectNode(field)
       // collect missing argument input types
-      field.arguments.forEach(argument => {
-        const argType = getNamedType(argument.type)
-        const argTypeName = argType.name.value
-        if (
-          !definitionPool.some(d => d.name.value === argTypeName) &&
-          !builtinTypes.includes(argTypeName)
-        ) {
-          const argTypeMatch = schemaMap[argTypeName]
-          if (!argTypeMatch) {
-            throw new Error(
-              `Field ${field.name.value}: Couldn't find type ${
-                argTypeName
-              } in any of the schemas.`,
-            )
-          }
-          newTypeDefinitions.push(argTypeMatch)
-        }
-      })
-
-      // collect missing field types
-      if (
-        !definitionPool.some(d => d.name.value === typeName) &&
-        !builtinTypes.includes(typeName)
-      ) {
-        const schemaType = schemaMap[typeName] as ObjectTypeDefinitionNode
-        if (!schemaType) {
-          throw new Error(
-            `Field ${field.name.value}: Couldn't find type ${typeName} in any of the schemas.`,
-          )
-        }
-        newTypeDefinitions.push(schemaType)
-      }
+      field.arguments.forEach(collectNode)
     })
   }
 
   return newTypeDefinitions
+
+  function collectNode(node: FieldDefinitionNode | InputValueDefinitionNode) {
+    const nodeType = getNamedType(node.type)
+    const nodeTypeName = nodeType.name.value
+
+    // collect missing argument input types
+    if (
+      !definitionPool.some(d => d.name.value === nodeTypeName) &&
+      !builtinTypes.includes(nodeTypeName)
+    ) {
+      const argTypeMatch = schemaMap[nodeTypeName]
+      if (!argTypeMatch) {
+        throw new Error(
+          `Field ${node.name.value}: Couldn't find type ${nodeTypeName} in any of the schemas.`,
+        )
+      }
+      newTypeDefinitions.push(argTypeMatch)
+    }
+
+    node.directives.forEach(collectDirective)
+  }
+
+  function collectDirective(directive: DirectiveNode) {
+    const directiveName = directive.name.value
+    if (
+      !definitionPool.some(d => d.name.value === directiveName) &&
+      !builtinDirectives.includes(directiveName)
+    ) {
+      const directive = schemaMap[directiveName] as DirectiveDefinitionNode
+      if (!directive) {
+        throw new Error(
+          `Directive ${directiveName}: Couldn't find type ${
+            directiveName
+          } in any of the schemas.`,
+        )
+      }
+      directive.arguments.forEach(collectNode)
+
+      newTypeDefinitions.push(directive)
+    }
+  }
 }
 
 /**

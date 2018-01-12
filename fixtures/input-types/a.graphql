@@ -2,6 +2,6 @@
 
 type A {
   # test 1
-  first(b: B): String @first
+  first(b: B): String
   second: Float
 }
