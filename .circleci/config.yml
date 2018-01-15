@@ -37,7 +37,9 @@ jobs:
     docker: 
       - image: circleci/node
     steps: 
-      - run: sudo npm install -g semantic-release@12.0.0
+      - checkout
+      - run: sudo npm install -g yarn semantic-release@12.0.0
+      - run: yarn install
       - run: semantic-release
       - run: yarn docs
       # needs proper NOW setup first
@@ -50,8 +52,8 @@ workflows:
       - build-node4
       - build-node6
       - build-node8
-      # - release:
-      #   requires: 
-      #     - build-node4
-      #     - build-node6
-      #     - build-node8
+      - release:
+        requires: 
+          - build-node4
+          - build-node6
+          - build-node8
