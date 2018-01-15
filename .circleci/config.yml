@@ -3,7 +3,7 @@ references:
   run_tests: &run_tests
     steps:
       - checkout
-      - run: sudo npm install -g yarn semantic-release@12.0.0
+      - run: sudo npm install -g yarn
       - run: yarn install
       - run:
           name: test
@@ -19,12 +19,6 @@ references:
       - store_artifacts:
           path: coverage
           prefix: coverage
-    # Removing this for now while I'm testing workflows.
-    #   - run: semantic-release
-    # Add this in after fan-out.
-    #   - run: yarn docs
-      # needs proper NOW setup first
-      # - run: yarn docs:publish
 
 jobs:
   build-node4:
@@ -35,6 +29,19 @@ jobs:
     docker:
       - image: circleci/node:6
     <<: *run_tests
+  build-node8:
+    docker:
+      - image: circleci/node
+    <<: *run_tests
+  release:
+    docker: 
+      - image: circleci/node
+    steps: 
+      - run: sudo npm install -g semantic-release@12.0.0
+      - run: semantic-release
+      - run: yarn docs
+      # needs proper NOW setup first
+      # - run: yarn docs:publish
 
 workflows:
   version: 2
@@ -42,3 +49,9 @@ workflows:
     jobs:
       - build-node4
       - build-node6
+      - build-node8
+      - release:
+        requires: 
+          - build-node4
+          - build-node6
+          - build-node8
