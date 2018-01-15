@@ -50,8 +50,8 @@ workflows:
       - build-node4
       - build-node6
       - build-node8
-      - release:
-        requires: 
-          - build-node4
-          - build-node6
-          - build-node8
+      # - release:
+      #   requires: 
+      #     - build-node4
+      #     - build-node6
+      #     - build-node8
