@@ -1,4 +1,4 @@
-import { keyBy, uniqBy } from 'lodash'
+import { keyBy, uniqBy, includes } from 'lodash'
 import {
   DocumentNode,
   TypeDefinitionNode,
@@ -147,7 +147,7 @@ function collectNewTypeDefinitions(
     // collect missing argument input types
     if (
       !definitionPool.some(d => d.name.value === nodeTypeName) &&
-      !builtinTypes.includes(nodeTypeName)
+      !includes(builtinTypes, nodeTypeName)
     ) {
       const argTypeMatch = schemaMap[nodeTypeName]
       if (!argTypeMatch) {
@@ -165,7 +165,7 @@ function collectNewTypeDefinitions(
     const directiveName = directive.name.value
     if (
       !definitionPool.some(d => d.name.value === directiveName) &&
-      !builtinDirectives.includes(directiveName)
+      !includes(builtinDirectives, directiveName)
     ) {
       const directive = schemaMap[directiveName] as DirectiveDefinitionNode
       if (!directive) {

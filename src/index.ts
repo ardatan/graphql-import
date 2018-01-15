@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import { DefinitionNode, parse, print, TypeDefinitionNode, GraphQLObjectType, ObjectTypeDefinitionNode, DocumentNode, Kind } from 'graphql'
-import { flatten, groupBy } from 'lodash'
+import { flatten, groupBy, includes } from 'lodash'
 import * as path from 'path'
 
 import {
@@ -88,13 +88,13 @@ export function importSchema(schema: string, schemas?: { [key: string]: string }
   // And should always be in the first set, to make sure they
   // are not filtered out.
   const typesToFilter = ['Query', 'Mutation', 'Subscription']
-  const firstTypes = flatten(typeDefinitions).filter(d => typesToFilter.includes(d.name.value))
-  const otherFirstTypes = typeDefinitions[0].filter(d => !typesToFilter.includes(d.name.value))
+  const firstTypes = flatten(typeDefinitions).filter(d => includes(typesToFilter, d.name.value))
+  const otherFirstTypes = typeDefinitions[0].filter(d => !includes(typesToFilter, d.name.value))
   const firstSet = otherFirstTypes.concat(firstTypes)
   const processedTypeNames = []
   const mergedFirstTypes = []
   for (const type of firstSet) {
-    if (!processedTypeNames.includes(type.name.value)) {
+    if (!includes(processedTypeNames, type.name.value)) {
       processedTypeNames.push(type.name.value)
       mergedFirstTypes.push(type)
     } else {
@@ -232,10 +232,10 @@ function filterImportedDefinitions(
 
   const filteredDefinitions = filterTypeDefinitions(typeDefinitions)
 
-  if (imports.includes('*')) {
+  if (includes(imports, '*')) {
     return filteredDefinitions
   } else {
-    const result = filteredDefinitions.filter(d => imports.map(i => i.split('.')[0]).includes(d.name.value))
+    const result = filteredDefinitions.filter(d => includes(imports.map(i => i.split('.')[0]), d.name.value))
     const fieldImports = imports
       .filter(i => i.split('.').length > 1)
     const groupedFieldImports = groupBy(fieldImports, x => x.split('.')[0])
@@ -244,7 +244,7 @@ function filterImportedDefinitions(
       const fields = groupedFieldImports[rootType].map(x => x.split('.')[1]);
       (filteredDefinitions.find(def => def.name.value === rootType) as ObjectTypeDefinitionNode).fields =
         (filteredDefinitions.find(def => def.name.value === rootType) as ObjectTypeDefinitionNode).fields
-          .filter(f => fields.includes(f.name.value) || fields.includes('*'))
+          .filter(f => includes(fields, f.name.value) || includes(fields, '*'))
     }
 
     return result
@@ -270,6 +270,6 @@ function filterTypeDefinitions(
     'InputObjectTypeDefinition'
   ]
   return definitions
-    .filter(d => validKinds.includes(d.kind))
+    .filter(d => includes(validKinds, d.kind))
     .map(d => d as ValidDefinitionNode)
 }
