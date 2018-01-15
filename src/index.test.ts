@@ -54,6 +54,17 @@ test('parse: multi line import', t => {
   ])
 })
 
+test('importSchema: imports only', t => {
+  const expectedSDL = `\
+type Query {
+  first: String
+  second: Float
+  third: String
+}
+`
+  t.is(importSchema('fixtures/imports-only/all.graphql'), expectedSDL)
+})
+
 test('importSchema: field types', t => {
   const expectedSDL = `\
 type A {

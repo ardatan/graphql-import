@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-import { DefinitionNode, parse, print, TypeDefinitionNode, GraphQLObjectType, ObjectTypeDefinitionNode } from 'graphql'
+import { DefinitionNode, parse, print, TypeDefinitionNode, GraphQLObjectType, ObjectTypeDefinitionNode, DocumentNode, Kind } from 'graphql'
 import { flatten, groupBy } from 'lodash'
 import * as path from 'path'
 
@@ -73,7 +73,7 @@ export function parseSDL(sdl: string): RawModule[] {
  */
 export function importSchema(schema: string, schemas?: { [key: string]: string }): string {
   const sdl = read(schema, schemas) || schema
-  const document = parse(sdl, { noLocation: true })
+  const document = getDocumentFromSDL(sdl)
 
   // Recursively process the imports, starting by importing all types from the initial schema
   let { allDefinitions, typeDefinitions } = collectDefinitions(
@@ -112,6 +112,39 @@ export function importSchema(schema: string, schemas?: { [key: string]: string }
   // Return the schema as string
   return print(document)
 }
+
+/**
+ * Parses a schema into a graphql DocumentNode.
+ * If the schema is empty a DocumentNode with empty definitions will be created.
+ *
+ * @param sdl Schema to parse
+ * @returns A graphql DocumentNode with definitions of the parsed sdl.
+ */
+function getDocumentFromSDL(sdl: string): DocumentNode {
+  if (isEmptySDL(sdl)) {
+    return {
+      kind: Kind.DOCUMENT,
+      definitions: [],
+    }
+  } else {
+    return parse(sdl, { noLocation: true })
+  }
+}
+
+/**
+ * Check if a schema contains any type definitions at all.
+ *
+ * @param sdl Schema to parse
+ * @returns True if SDL only contains comments and/or whitespaces
+ */
+function isEmptySDL(sdl: string): boolean {
+  return sdl
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => !(l.length === 0 || l.startsWith('#')))
+    .length === 0
+}
+
 /**
  * Recursively process all schema files. Keeps track of both the filtered
  * type definitions, and all type definitions, because they might be needed
@@ -141,7 +174,7 @@ function collectDefinitions(
   const dirname = path.dirname(filePath)
 
   // Get TypeDefinitionNodes from current schema
-  const document = parse(sdl)
+  const document = getDocumentFromSDL(sdl)
 
   // Add all definitions to running total
   allDefinitions.push(filterTypeDefinitions(document.definitions))
