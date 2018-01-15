@@ -1,6 +1,9 @@
 {
   "name": "graphql-import",
   "version": "0.0.0-semantic-release",
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "license": "MIT",
   "repository": "git@github.com:graphcool/graphql-import.git",
   "files": [

@@ -1,8 +1,6 @@
 version: 2
-jobs:
-  build:
-    docker:
-      - image: circleci/node
+references: 
+  run_tests: &run_tests
     steps:
       - checkout
       - run: sudo npm install -g yarn semantic-release@12.0.0
@@ -21,7 +19,26 @@ jobs:
       - store_artifacts:
           path: coverage
           prefix: coverage
-      - run: semantic-release
-      - run: yarn docs
+    # Removing this for now while I'm testing workflows.
+    #   - run: semantic-release
+    # Add this in after fan-out.
+    #   - run: yarn docs
       # needs proper NOW setup first
       # - run: yarn docs:publish
+
+jobs:
+  build-node4:
+    docker:
+      - image: circleci/node:4
+    <<: *run_tests
+  build-node6:
+    docker:
+      - image: circleci/node:6
+    <<: *run_tests
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build-node4
+      - build-node6
