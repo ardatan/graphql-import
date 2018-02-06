@@ -42,7 +42,7 @@
     "docs:publish": "cp ./now.json ./docs && cd docs && now --public -f && now alias && now rm --yes --safe graphql-import & cd .."
   },
   "devDependencies": {
-    "@types/node": "8.5.9",
+    "@types/node": "8.5.10",
     "@types/graphql": "0.12.3",
     "@types/lodash": "4.14.101",
     "ava": "0.25.0",
