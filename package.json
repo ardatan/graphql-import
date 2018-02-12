@@ -46,7 +46,7 @@
     "@types/graphql": "0.12.3",
     "@types/lodash": "4.14.102",
     "ava": "0.25.0",
-    "ava-ts": "0.24.1",
+    "ava-ts": "0.24.2",
     "nyc": "11.4.1",
     "tap-xunit": "2.2.0",
     "ts-node": "4.1.0",
