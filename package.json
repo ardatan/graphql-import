@@ -41,12 +41,16 @@
     "docs": "typedoc --out docs src/index.ts --hideGenerator --exclude **/*.test.ts",
     "docs:publish": "cp ./now.json ./docs && cd docs && now --public -f && now alias && now rm --yes --safe graphql-import & cd .."
   },
+  "peerDependencies": {
+    "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0"
+  },
   "devDependencies": {
-    "@types/node": "8.9.4",
     "@types/graphql": "0.12.4",
     "@types/lodash": "4.14.104",
+    "@types/node": "9.4.6",
     "ava": "0.25.0",
     "ava-ts": "0.24.2",
+    "graphql": "^0.13.0",
     "nyc": "11.4.1",
     "tap-xunit": "2.2.0",
     "ts-node": "4.1.0",
@@ -56,7 +60,6 @@
     "typescript": "2.7.2"
   },
   "dependencies": {
-    "graphql": "^0.13.0",
     "lodash": "^4.17.4"
   }
 }
