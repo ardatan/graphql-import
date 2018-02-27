@@ -60,7 +60,7 @@ export function parseSDL(sdl: string): RawModule[] {
   return sdl
     .split('\n')
     .map(l => l.trim())
-    .filter(l => l.startsWith('# import') || l.startsWith('#import'))
+    .filter(l => l.startsWith('# import ') || l.startsWith('#import '))
     .map(l => l.replace('#', '').trim())
     .map(parseImportLine)
 }
