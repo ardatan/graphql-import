@@ -37,6 +37,10 @@ test('parseImportLine: different path', t => {
   })
 })
 
+test('parseSDL: non-import comment', t => {
+  t.deepEqual(parseSDL(`#importent: comment`), [])
+})
+
 test('parse: multi line import', t => {
   const sdl = `\
 # import A from "a.graphql"
