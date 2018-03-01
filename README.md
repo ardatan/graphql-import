@@ -2,8 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/graphcool/graphql-import.svg?style=shield)](https://circleci.com/gh/graphcool/graphql-import) [![npm version](https://badge.fury.io/js/graphql-import.svg)](https://badge.fury.io/js/graphql-import)
 
-
 Import &amp; export definitions in GraphQL SDL (also refered to as GraphQL modules)
+
+There is a also a [`graphql-import-loader`](https://github.com/graphcool/graphql-import-loader) for Webpack available.
 
 ## Install
 
