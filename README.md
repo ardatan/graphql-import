@@ -4,7 +4,7 @@
 
 Import &amp; export definitions in GraphQL SDL (also refered to as GraphQL modules)
 
-There is a also a [`graphql-import-loader`](https://github.com/graphcool/graphql-import-loader) for Webpack available.
+There is also a [`graphql-import-loader`](https://github.com/graphcool/graphql-import-loader) for Webpack available.
 
 ## Install
 
