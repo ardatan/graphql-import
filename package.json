@@ -52,7 +52,7 @@
     "ava-ts": "0.24.2",
     "graphql": "0.13.2",
     "nyc": "11.6.0",
-    "tap-xunit": "2.2.0",
+    "tap-xunit": "2.3.0",
     "ts-node": "4.1.0",
     "tslint": "5.9.1",
     "tslint-config-standard": "7.0.0",
