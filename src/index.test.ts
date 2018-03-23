@@ -8,6 +8,13 @@ test('parseImportLine: parse single import', t => {
   })
 })
 
+test('parseImportLine: optional semicolon', t => {
+  t.deepEqual(parseImportLine(`import A from "schema.graphql";`), {
+    imports: ['A'],
+    from: 'schema.graphql',
+  })
+})
+
 test('parseImportLine: invalid', t => {
   t.throws(() => parseImportLine(`import from "schema.graphql"`), Error)
 })
