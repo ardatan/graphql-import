@@ -193,9 +193,20 @@ function collectDefinitions(
 
   // Read imports from current file
   const rawModules = parseSDL(sdl)
+  const mergedModules: RawModule[] = []
+
+  // Merge imports from the same path
+  rawModules.forEach(m => {
+    const mergedModule = mergedModules.find(mm => mm.from === m.from)
+    if (mergedModule) {
+      mergedModule.imports = mergedModule.imports.concat(m.imports)
+    } else {
+      mergedModules.push(m)
+    }
+  })
 
   // Process each file (recursively)
-  rawModules.forEach(m => {
+  mergedModules.forEach(m => {
     // If it was not yet processed (in case of circular dependencies)
     const moduleFilePath = isFile(filePath) ? path.resolve(path.join(dirname, m.from)) : m.from
     if (!processedFiles.has(moduleFilePath)) {
