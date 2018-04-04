@@ -31,11 +31,11 @@ jobs:
     <<: *run_tests
   build-node8:
     docker:
-      - image: circleci/node:latest@sha256:838bf44e30ae68dcb73d643137883ccdfa81a046eed91ae25c9c42a361d554fe
+      - image: circleci/node:latest@sha256:8c909b496d13837354db2855e7fd8563599eb091304bdb7bdbfde0420621fe2f
     <<: *run_tests
   release:
     docker: 
-      - image: circleci/node:latest@sha256:838bf44e30ae68dcb73d643137883ccdfa81a046eed91ae25c9c42a361d554fe
+      - image: circleci/node:latest@sha256:8c909b496d13837354db2855e7fd8563599eb091304bdb7bdbfde0420621fe2f
     steps: 
       - checkout
       - run: sudo npm install -g yarn semantic-release@12.0.0
