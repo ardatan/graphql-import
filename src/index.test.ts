@@ -363,6 +363,33 @@ type C {
   t.is(importSchema('fixtures/interfaces/a.graphql'), expectedSDL)
 })
 
+test('importSchema: interfaces-many', t => {
+  const expectedSDL = `\
+type A implements B {
+  first: String
+  second: Float
+}
+
+interface B {
+  second: Float
+  c: [C!]!
+}
+
+type C implements D1 & D2 {
+  c: ID!
+}
+
+interface D1 {
+  d1: ID!
+}
+
+interface D2 {
+  d2: ID!
+}
+`
+  t.is(importSchema('fixtures/interfaces-many/a.graphql'), expectedSDL)
+})
+
 test('importSchema: interfaces-implements', t => {
   const expectedSDL = `\
 type A implements B {
@@ -378,6 +405,27 @@ type B1 implements B {
 }
 `
   t.is(importSchema('fixtures/interfaces-implements/a.graphql'), expectedSDL)
+})
+
+test('importSchema: interfaces-implements-many', t => {
+  const expectedSDL = `\
+type A implements B {
+  id: ID!
+}
+
+interface B {
+  id: ID!
+}
+
+type B1 implements B {
+  id: ID!
+}
+
+type B2 implements B {
+  id: ID!
+}
+`
+  t.is(importSchema('fixtures/interfaces-implements-many/a.graphql'), expectedSDL)
 })
 
 test('importSchema: input types', t => {
