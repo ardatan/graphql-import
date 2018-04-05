@@ -23,7 +23,7 @@ references:
 jobs:
   build-node4:
     docker:
-      - image: circleci/node:4@sha256:015a133a21380b6e06026702e4e09a4374954ec39caa3ffda8b09b8d6943b4f5
+      - image: circleci/node:4@sha256:90256b8905981cd1763784e1ffc8f59cda58d19e1ce139641466269b7259fe3b
     <<: *run_tests
   build-node6:
     docker:
