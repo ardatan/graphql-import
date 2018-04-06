@@ -27,7 +27,7 @@ jobs:
     <<: *run_tests
   build-node6:
     docker:
-      - image: circleci/node:6@sha256:6c64433cd80bb347d5d95fada05743163eacbae3ceebeebfe81ae142d26bc57e
+      - image: circleci/node:6@sha256:635b022773f0346704312a36d1ce4628e0676a8a2b04e76c15888b67deaeb182
     <<: *run_tests
   build-node8:
     docker:
