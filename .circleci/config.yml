@@ -3,8 +3,7 @@ references:
   run_tests: &run_tests
     steps:
       - checkout
-      - run: sudo npm install -g yarn
-      - run: yarn install
+      - run: yarn
       - run:
           name: test
           command: |
@@ -23,22 +22,22 @@ references:
 jobs:
   build-node4:
     docker:
-      - image: circleci/node:4@sha256:9611e1ec2f4e0e18765d2e62e4d24e69323b7d9693438ff256c323798a08c346
+      - image: circleci/node:4
     <<: *run_tests
   build-node6:
     docker:
-      - image: circleci/node:6@sha256:02bc3e7f6faef71eb8ce42d8b28f945e9501bb21502792e76dc472fcef9f70a1
+      - image: circleci/node:6
     <<: *run_tests
   build-node8:
     docker:
-      - image: circleci/node:latest@sha256:8c909b496d13837354db2855e7fd8563599eb091304bdb7bdbfde0420621fe2f
+      - image: circleci/node:8
     <<: *run_tests
   release:
     docker: 
-      - image: circleci/node:latest@sha256:8c909b496d13837354db2855e7fd8563599eb091304bdb7bdbfde0420621fe2f
+      - image: circleci/node:latest
     steps: 
       - checkout
-      - run: sudo npm install -g yarn semantic-release@12.0.0
+      - run: sudo npm install -g semantic-release
       - run: yarn install
       - run: semantic-release
       - run: yarn docs
