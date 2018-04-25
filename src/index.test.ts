@@ -572,13 +572,23 @@ input PostFilter {
   t.is(actualSDL, expectedSDL)
 })
 
-test('global schema modules', () => {
+test('global schema modules', t => {
   const shared = `
     type Shared {
       first: String
     }
   `
-  importSchema('fixtures/global/a.graphql', { shared })
+  const expectedSDL = `\
+type A {
+  first: String
+  second: Shared
+}
+
+type Shared {
+  first: String
+}
+`
+  t.is(importSchema('fixtures/global/a.graphql', { shared }), expectedSDL)
 })
 
 test('missing type on type', t => {
