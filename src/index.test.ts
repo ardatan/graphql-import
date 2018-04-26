@@ -572,6 +572,25 @@ input PostFilter {
   t.is(actualSDL, expectedSDL)
 })
 
+test('global schema modules', t => {
+  const shared = `
+    type Shared {
+      first: String
+    }
+  `
+  const expectedSDL = `\
+type A {
+  first: String
+  second: Shared
+}
+
+type Shared {
+  first: String
+}
+`
+  t.is(importSchema('fixtures/global/a.graphql', { shared }), expectedSDL)
+})
+
 test('missing type on type', t => {
   const err = t.throws(() => importSchema('fixtures/type-not-found/a.graphql'), Error)
   t.is(err.message, `Field test: Couldn't find type Post in any of the schemas.`)
