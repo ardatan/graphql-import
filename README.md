@@ -24,7 +24,9 @@ const resolvers = {}
 const schema = makeExecutableSchema({ typeDefs, resolvers })
 ```
 
-## Example
+## Examples
+
+### Importing specific fields
 
 Assume the following directory structure:
 
@@ -67,7 +69,7 @@ type C {
 }
 ```
 
-Running `console.log(importSchema('a.graphql'))` procudes the following output:
+Running `console.log(importSchema('a.graphql'))` produces the following output:
 
 ```graphql
 type A {
@@ -83,6 +85,48 @@ type B {
 
 type C {
   id: ID!
+}
+```
+
+### Extending root fields
+
+It is possible to import from a root field like `Query`;
+
+`queries.graphql`
+
+```graphql
+type Query {
+  feed: [Post!]!
+  drafts: [Post!]!
+}
+```
+
+`mutations.graphql`
+
+```graphql
+type Mutation {
+  publish(id: ID!): Post!
+  deletePost(id: ID!): Post!
+}
+```
+
+`schema.graphql`
+
+```graphql
+# import Query.* from "queries.graphql"
+# import Mutation.publish from "mutations.graphql"
+```
+
+Running `console.log(importSchema('schema.graphql'))` produces the following output:
+
+```graphql
+type Query {
+  feed: [Post!]!
+  drafts: [Post!]!
+}
+
+type Mutation {
+  publish(id: ID!): Post!
 }
 ```
 
