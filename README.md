@@ -1,6 +1,6 @@
 # graphql-import
 
-[![CircleCI](https://circleci.com/gh/graphcool/graphql-import.svg?style=shield)](https://circleci.com/gh/graphcool/graphql-import) [![npm version](https://badge.fury.io/js/graphql-import.svg)](https://badge.fury.io/js/graphql-import)
+[![CircleCI](https://circleci.com/gh/prismagraphql/graphql-import.svg?style=shield)](https://circleci.com/gh/prismagraphql/graphql-import) [![npm version](https://badge.fury.io/js/graphql-import.svg)](https://badge.fury.io/js/graphql-import)
 
 Import &amp; export definitions in GraphQL SDL (also refered to as GraphQL modules)
 
@@ -142,3 +142,5 @@ The [implementation documentation](https://graphql-import.now.sh/) documents how
 - Namespaces
 - Support importing from HTTP endpoints (or [Links](https://github.com/apollographql/apollo-link))
 - Create RFC to add import syntax to GraphQL spec
+
+<p align="center"><a href="https://oss.prisma.io"><img src="https://imgur.com/IMU2ERq.png" alt="Prisma" height="170px"></a></p>
