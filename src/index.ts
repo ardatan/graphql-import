@@ -274,7 +274,7 @@ function filterImportedDefinitions(
     ) {
       const previousTypeDefinitions: { [key: string]: DefinitionNode } = keyBy(
         flatten(allDefinitions.slice(0, allDefinitions.length - 1)).filter(
-          def => !rootFields.includes(def.name.value),
+          def => !includes(rootFields, def.name.value),
         ),
         def => def.name.value,
       )
