@@ -309,23 +309,86 @@ type C2 {
   t.is(importSchema(schemaA), expectedSDL)
 })
 
-test('importSchema: unions', t => {
+test(`importSchema: import all - exclude Query/Mutation/Subscription type`, t => {
+  const schemaC = `
+    type C1 {
+      id: ID!
+    }
+
+    type C2 {
+      id: ID!
+    }
+
+    type C3 {
+      id: ID!
+    }
+
+    type Query {
+      hello: String!
+    }
+
+    type Mutation {
+      hello: String!
+    }
+
+    type Subscription {
+      hello: String!
+    }
+    `
+
+  const schemaB = `
+    # import * from 'schemaC'
+
+    type B {
+      hello: String!
+      c1: C1
+      c2: C2
+    }`
+
+  const schemaA = `
+    # import B from 'schemaB'
+
+    type Query {
+      greet: String!
+    }
+
+    type A {
+      # test 1
+      first: String
+      second: Float
+      b: B
+    }`
+
+  const schemas = {
+    schemaA, schemaB, schemaC
+  }
+
   const expectedSDL = `\
+type Query {
+  greet: String!
+}
+
 type A {
+  first: String
+  second: Float
   b: B
 }
 
-union B = C1 | C2
+type B {
+  hello: String!
+  c1: C1
+  c2: C2
+}
 
 type C1 {
-  c1: ID
+  id: ID!
 }
 
 type C2 {
-  c2: ID
+  id: ID!
 }
 `
-  t.is(importSchema('fixtures/unions/a.graphql'), expectedSDL)
+  t.is(importSchema(schemaA, schemas), expectedSDL)
 })
 
 test('importSchema: scalar', t => {
