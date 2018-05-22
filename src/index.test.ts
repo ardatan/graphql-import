@@ -183,7 +183,9 @@ test('importSchema: import all from objects', t => {
     }`
 
   const schemas = {
-    schemaA, schemaB, schemaC
+    schemaA,
+    schemaB,
+    schemaC,
   }
 
   const expectedSDL = `\
@@ -246,7 +248,7 @@ test(`importSchema: import all mix 'n match`, t => {
     }`
 
   const schemas = {
-    schemaB
+    schemaB,
   }
 
   const expectedSDL = `\
@@ -274,7 +276,6 @@ type C2 {
 })
 
 test(`importSchema: import all mix 'n match 2`, t => {
-
   const schemaA = `
     # import * from "fixtures/import-all/b.graphql"
 
@@ -360,7 +361,9 @@ test(`importSchema: import all - exclude Query/Mutation/Subscription type`, t =>
     }`
 
   const schemas = {
-    schemaA, schemaB, schemaC
+    schemaA,
+    schemaB,
+    schemaC,
   }
 
   const expectedSDL = `\
@@ -499,7 +502,10 @@ type B2 implements B {
   id: ID!
 }
 `
-  t.is(importSchema('fixtures/interfaces-implements-many/a.graphql'), expectedSDL)
+  t.is(
+    importSchema('fixtures/interfaces-implements-many/a.graphql'),
+    expectedSDL,
+  )
 })
 
 test('importSchema: input types', t => {
@@ -602,12 +608,12 @@ interface Node {
 
 test('root field imports', t => {
   const expectedSDL = `\
-type Dummy {
-  field: String
-}
-
 type Query {
   posts(filter: PostFilter): [Post]
+}
+
+type Dummy {
+  field: String
 }
 
 type Post {
@@ -624,14 +630,14 @@ input PostFilter {
 
 test('merged root field imports', t => {
   const expectedSDL = `\
-type Dummy {
-  field: String
-}
-
 type Query {
   helloA: String
   posts(filter: PostFilter): [Post]
   hello: String
+}
+
+type Dummy {
+  field: String
 }
 
 type Post {
@@ -666,36 +672,75 @@ type Shared {
 })
 
 test('missing type on type', t => {
-  const err = t.throws(() => importSchema('fixtures/type-not-found/a.graphql'), Error)
-  t.is(err.message, `Field test: Couldn't find type Post in any of the schemas.`)
+  const err = t.throws(
+    () => importSchema('fixtures/type-not-found/a.graphql'),
+    Error,
+  )
+  t.is(
+    err.message,
+    `Field test: Couldn't find type Post in any of the schemas.`,
+  )
 })
 
 test('missing type on interface', t => {
-  const err = t.throws(() => importSchema('fixtures/type-not-found/b.graphql'), Error)
-  t.is(err.message, `Field test: Couldn't find type Post in any of the schemas.`)
+  const err = t.throws(
+    () => importSchema('fixtures/type-not-found/b.graphql'),
+    Error,
+  )
+  t.is(
+    err.message,
+    `Field test: Couldn't find type Post in any of the schemas.`,
+  )
 })
 
 test('missing type on input type', t => {
-  const err = t.throws(() => importSchema('fixtures/type-not-found/c.graphql'), Error)
-  t.is(err.message, `Field post: Couldn't find type Post in any of the schemas.`)
+  const err = t.throws(
+    () => importSchema('fixtures/type-not-found/c.graphql'),
+    Error,
+  )
+  t.is(
+    err.message,
+    `Field post: Couldn't find type Post in any of the schemas.`,
+  )
 })
 
 test('missing interface type', t => {
-  const err = t.throws(() => importSchema('fixtures/type-not-found/d.graphql'), Error)
-  t.is(err.message, `Couldn't find interface MyInterface in any of the schemas.`)
+  const err = t.throws(
+    () => importSchema('fixtures/type-not-found/d.graphql'),
+    Error,
+  )
+  t.is(
+    err.message,
+    `Couldn't find interface MyInterface in any of the schemas.`,
+  )
 })
 
 test('missing union type', t => {
-  const err = t.throws(() => importSchema('fixtures/type-not-found/e.graphql'), Error)
+  const err = t.throws(
+    () => importSchema('fixtures/type-not-found/e.graphql'),
+    Error,
+  )
   t.is(err.message, `Couldn't find type C in any of the schemas.`)
 })
 
 test('missing type on input type', t => {
-  const err = t.throws(() => importSchema('fixtures/type-not-found/f.graphql'), Error)
-  t.is(err.message, `Field myfield: Couldn't find type Post in any of the schemas.`)
+  const err = t.throws(
+    () => importSchema('fixtures/type-not-found/f.graphql'),
+    Error,
+  )
+  t.is(
+    err.message,
+    `Field myfield: Couldn't find type Post in any of the schemas.`,
+  )
 })
 
 test('missing type on directive', t => {
-  const err = t.throws(() => importSchema('fixtures/type-not-found/g.graphql'), Error)
-  t.is(err.message, `Directive first: Couldn't find type first in any of the schemas.`)
+  const err = t.throws(
+    () => importSchema('fixtures/type-not-found/g.graphql'),
+    Error,
+  )
+  t.is(
+    err.message,
+    `Directive first: Couldn't find type first in any of the schemas.`,
+  )
 })
