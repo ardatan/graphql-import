@@ -46,7 +46,7 @@
     "graphql": "0.13.2",
     "nyc": "11.8.0",
     "tap-xunit": "2.3.0",
-    "ts-node": "6.0.4",
+    "ts-node": "6.0.5",
     "tslint": "5.10.0",
     "tslint-config-standard": "7.0.0",
     "typedoc": "0.11.1",
