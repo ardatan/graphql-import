@@ -744,3 +744,14 @@ test('missing type on directive', t => {
     `Directive first: Couldn't find type first in any of the schemas.`,
   )
 })
+
+test('import with collision', t => {
+  // Local type gets preference over imported type
+  const expectedSDL = `\
+type User {
+  id: ID!
+  name: String!
+}
+`
+  t.is(importSchema('fixtures/collision/a.graphql'), expectedSDL)
+})
