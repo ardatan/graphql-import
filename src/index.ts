@@ -9,7 +9,7 @@ import {
   DocumentNode,
   Kind,
 } from 'graphql'
-import { flatten, groupBy, includes, keyBy } from 'lodash'
+import { flatten, groupBy, includes, keyBy, isEqual } from 'lodash'
 import * as path from 'path'
 
 import { completeDefinitionPool, ValidDefinitionNode } from './definition'
@@ -182,7 +182,7 @@ function collectDefinitions(
   sdl: string,
   filePath: string,
   schemas?: { [key: string]: string },
-  processedFiles: Set<string> = new Set(),
+  processedFiles: Map<string, RawModule[]> = new Map(),
   typeDefinitions: ValidDefinitionNode[][] = [],
   allDefinitions: ValidDefinitionNode[][] = [],
 ): {
@@ -208,31 +208,22 @@ function collectDefinitions(
   // Add typedefinitions to running total
   typeDefinitions.push(currentTypeDefinitions)
 
-  // Mark file as processed (for circular dependency cases)
-  processedFiles.add(key)
-
   // Read imports from current file
   const rawModules = parseSDL(sdl)
-  const mergedModules: RawModule[] = []
-
-  // Merge imports from the same path
-  rawModules.forEach(m => {
-    const mergedModule = mergedModules.find(mm => mm.from === m.from)
-    if (mergedModule) {
-      mergedModule.imports = mergedModule.imports.concat(m.imports)
-    } else {
-      mergedModules.push(m)
-    }
-  })
 
   // Process each file (recursively)
-  mergedModules.forEach(m => {
+  rawModules.forEach(m => {
     // If it was not yet processed (in case of circular dependencies)
     const moduleFilePath =
-      isFile(filePath) && isFile(m.from)
-        ? path.resolve(path.join(dirname, m.from))
-        : m.from
-    if (!processedFiles.has(moduleFilePath)) {
+    isFile(filePath) && isFile(m.from)
+    ? path.resolve(path.join(dirname, m.from))
+    : m.from
+
+    const processedFile = processedFiles.get(key)
+    if (!processedFile || !processedFile.find(rModule => isEqual(rModule, m))) {
+      // Mark this specific import line as processed for this file (for cicular dependency cases)
+      processedFiles.set(key, processedFile ? processedFile.concat(m) : [m])
+
       collectDefinitions(
         m.imports,
         read(moduleFilePath, schemas),
