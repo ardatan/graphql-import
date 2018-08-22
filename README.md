@@ -4,7 +4,7 @@
 
 Import &amp; export definitions in GraphQL SDL (also refered to as GraphQL modules)
 
-> There is also a [`graphql-import-loader`](https://github.com/graphcool/graphql-import-loader) for Webpack available.
+> There is also a [`graphql-import-loader`](https://github.com/prisma/graphql-import-loader) for Webpack available.
 
 ## Install
 
@@ -24,117 +24,68 @@ const resolvers = {}
 const schema = makeExecutableSchema({ typeDefs, resolvers })
 ```
 
-## Examples
-
-### Importing specific fields
-
 Assume the following directory structure:
 
 ```
 .
-├── a.graphql
-├── b.graphql
-└── c.graphql
-```
-
-`a.graphql`
-
-```graphql
-# import B from "b.graphql"
-
-type A {
-  # test 1
-  first: String
-  second: Float
-  b: B
-}
-```
-
-`b.graphql`
-
-```graphql
-# import C from 'c.graphql'
-
-type B {
-  c: C
-  hello: String!
-}
-```
-
-`c.graphql`
-
-```graphql
-type C {
-  id: ID!
-}
-```
-
-Running `console.log(importSchema('a.graphql'))` produces the following output:
-
-```graphql
-type A {
-  first: String
-  second: Float
-  b: B
-}
-
-type B {
-  c: C
-  hello: String!
-}
-
-type C {
-  id: ID!
-}
-```
-
-### Extending root fields
-
-It is possible to import from a root field like `Query`;
-
-`queries.graphql`
-
-```graphql
-type Query {
-  feed: [Post!]!
-  drafts: [Post!]!
-}
-```
-
-`mutations.graphql`
-
-```graphql
-type Mutation {
-  publish(id: ID!): Post!
-  deletePost(id: ID!): Post!
-}
+├── schema.graphql
+├── posts.graphql
+└── comments.graphql
 ```
 
 `schema.graphql`
 
 ```graphql
-# import Query.* from "queries.graphql"
-# import Mutation.publish from "mutations.graphql"
+# import Post from "posts.graphql"
+
+type Query {
+  posts: [Post]
+}
+```
+
+`posts.graphql`
+
+```graphql
+# import Comment from 'comments.graphql'
+
+type Post {
+  comments: [Comment]
+  id: ID!
+  text: String!
+  tags: [String]
+}
+```
+
+`comments.graphql`
+
+```graphql
+type Comment {
+  id: ID!
+  text: String!
+}
 ```
 
 Running `console.log(importSchema('schema.graphql'))` produces the following output:
 
 ```graphql
 type Query {
-  feed: [Post!]!
-  drafts: [Post!]!
+  posts: [Post]
 }
 
-type Mutation {
-  publish(id: ID!): Post!
+type Post {
+  comments: [Comment]
+  id: ID!
+  text: String!
+  tags: [String]
+}
+
+type Comment {
+  id: ID!
+  text: String!
 }
 ```
 
-Please refer to [`src/index.test.ts`](https://github.com/graphcool/graphql-import/blob/master/src/index.test.ts) for more examples.
-
-## Development
-
-The [implementation documentation](https://graphql-import.now.sh/) documents how things are implemented under the hood. You can also use the VSCode test setup to debug your code/tests.
+## [Full documentation](https://oss.prisma.io/content/graphql-import/overview)
 
 ## Related topics & next steps
 
