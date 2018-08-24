@@ -40,7 +40,7 @@
   "devDependencies": {
     "@types/graphql": "0.12.6",
     "@types/lodash": "4.14.116",
-    "@types/node": "9.6.27",
+    "@types/node": "9.6.29",
     "ava": "0.25.0",
     "ava-ts": "0.25.1",
     "graphql": "0.13.2",
