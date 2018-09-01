@@ -87,6 +87,17 @@ type Query {
   t.is(importSchema('fixtures/import-duplicate/all.graphql'), expectedSDL)
 })
 
+test('importSchema: import nested', t => {
+  const expectedSDL = `\
+type Query {
+  first: String
+  second: Float
+  third: String
+}
+`
+  t.is(importSchema('fixtures/import-nested/all.graphql'), expectedSDL)
+})
+
 test('importSchema: field types', t => {
   const expectedSDL = `\
 type A {
