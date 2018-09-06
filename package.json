@@ -35,15 +35,15 @@
       "cp ./now.json ./docs && cd docs && now --public -f && now alias && now rm --yes --safe graphql-import & cd .."
   },
   "peerDependencies": {
-    "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0"
+    "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0"
   },
   "devDependencies": {
-    "@types/graphql": "0.12.6",
+    "@types/graphql": "14.0.0",
     "@types/lodash": "4.14.116",
     "@types/node": "9.6.31",
     "ava": "0.25.0",
     "ava-ts": "0.25.1",
-    "graphql": "0.13.2",
+    "graphql": "14.0.2",
     "nyc": "11.8.0",
     "tap-xunit": "2.3.0",
     "ts-node": "7.0.1",
