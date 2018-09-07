@@ -11,7 +11,6 @@ import {
 } from 'graphql'
 import { flatten, groupBy, includes, keyBy, isEqual } from 'lodash'
 import * as path from 'path'
-import * as resolveFrom from 'resolve-from'
 
 import { completeDefinitionPool, ValidDefinitionNode } from './definition'
 
@@ -166,29 +165,6 @@ function isEmptySDL(sdl: string): boolean {
 }
 
 /**
- * Resolve the path of an import.
- * First it will try to find a file relative from the file the import is in, if that fails it will try to resolve it as a module so imports from packages work correctly.
- *
- * @param filePath Path the import was made from
- * @param importFrom Path given for the import
- * @returns Full resolved path to a file
- */
-function resolveModuleFilePath(filePath: string, importFrom: string): string {
-  const dirname = path.dirname(filePath)
-  if (isFile(filePath) && isFile(importFrom)) {
-    try {
-      return fs.realpathSync(path.join(dirname, importFrom))
-    } catch (e) {
-      if (e.code === 'ENOENT') {
-        return resolveFrom(dirname, importFrom)
-      }
-    }
-  }
-
-  return importFrom
-}
-
-/**
  * Recursively process all schema files. Keeps track of both the filtered
  * type definitions, and all type definitions, because they might be needed
  * in post-processing (to add missing types)
@@ -214,6 +190,7 @@ function collectDefinitions(
   typeDefinitions: ValidDefinitionNode[][]
 } {
   const key = isFile(filePath) ? path.resolve(filePath) : filePath
+  const dirname = path.dirname(filePath)
 
   // Get TypeDefinitionNodes from current schema
   const document = getDocumentFromSDL(sdl)
@@ -237,12 +214,16 @@ function collectDefinitions(
   // Process each file (recursively)
   rawModules.forEach(m => {
     // If it was not yet processed (in case of circular dependencies)
-    const moduleFilePath = resolveModuleFilePath(filePath, m.from)
+    const moduleFilePath =
+    isFile(filePath) && isFile(m.from)
+    ? path.resolve(path.join(dirname, m.from))
+    : m.from
 
     const processedFile = processedFiles.get(key)
     if (!processedFile || !processedFile.find(rModule => isEqual(rModule, m))) {
       // Mark this specific import line as processed for this file (for cicular dependency cases)
       processedFiles.set(key, processedFile ? processedFile.concat(m) : [m])
+
       collectDefinitions(
         m.imports,
         read(moduleFilePath, schemas),
