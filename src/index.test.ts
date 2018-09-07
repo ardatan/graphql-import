@@ -1,4 +1,5 @@
 import test from 'ava'
+import * as fs from 'fs'
 import { parseImportLine, parseSDL, importSchema } from '.'
 
 test('parseImportLine: parse single import', t => {
@@ -44,6 +45,13 @@ test('parseImportLine: different path', t => {
   })
 })
 
+test('parseImportLine: module in node_modules', t => {
+  t.deepEqual(parseImportLine(`import A from "module-name"`), {
+    imports: ['A'],
+    from: 'module-name',
+  })
+})
+
 test('parseSDL: non-import comment', t => {
   t.deepEqual(parseSDL(`#importent: comment`), [])
 })
@@ -63,6 +71,39 @@ test('parse: multi line import', t => {
       from: 'b.graphql',
     },
   ])
+})
+
+test('Module in node_modules', t => {
+  const b = `\
+# import lower from './lower.graphql'
+type B {
+  id: ID!
+  nickname: String! @lower
+}
+`
+  const lower = `\
+directive @lower on FIELD_DEFINITION
+`
+  const expectedSDL = `\
+type A {
+  id: ID!
+  author: B!
+}
+
+type B {
+  id: ID!
+  nickname: String! @lower
+}
+
+directive @lower on FIELD_DEFINITION
+`
+  const moduleDir = 'node_modules/graphql-import-test'
+  if (!fs.existsSync(moduleDir)) {
+    fs.mkdirSync(moduleDir)
+  }
+  fs.writeFileSync(moduleDir + '/b.graphql', b)
+  fs.writeFileSync(moduleDir + '/lower.graphql', lower)
+  t.is(importSchema('fixtures/import-module/a.graphql'), expectedSDL)
 })
 
 test('importSchema: imports only', t => {

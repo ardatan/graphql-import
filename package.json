@@ -40,6 +40,7 @@
   "devDependencies": {
     "@types/graphql": "0.12.6",
     "@types/lodash": "4.14.116",
+    "@types/resolve-from": "0.0.18",
     "@types/node": "9.6.31",
     "ava": "0.25.0",
     "ava-ts": "0.25.1",
@@ -53,6 +54,7 @@
     "typescript": "3.0.1"
   },
   "dependencies": {
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "resolve-from": "^4.0.0"
   }
 }
