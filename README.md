@@ -1,6 +1,6 @@
 # graphql-import
 
-[![CircleCI](https://circleci.com/gh/prismagraphql/graphql-import.svg?style=shield)](https://circleci.com/gh/prismagraphql/graphql-import) [![npm version](https://badge.fury.io/js/graphql-import.svg)](https://badge.fury.io/js/graphql-import)
+[![CircleCI](https://circleci.com/gh/prisma/graphql-import.svg?style=shield)](https://circleci.com/gh/prisma/graphql-import) [![npm version](https://badge.fury.io/js/graphql-import.svg)](https://badge.fury.io/js/graphql-import)
 
 Import &amp; export definitions in GraphQL SDL (also refered to as GraphQL modules)
 
