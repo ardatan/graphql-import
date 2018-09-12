@@ -85,7 +85,7 @@ export function importSchema(
   schemas?: { [key: string]: string },
 ): string {
   const sdl = read(schema, schemas) || schema
-  const document = getDocumentFromSDL(sdl)
+  let document = getDocumentFromSDL(sdl)
 
   // Recursively process the imports, starting by importing all types from the initial schema
   let { allDefinitions, typeDefinitions } = collectDefinitions(
@@ -122,11 +122,14 @@ export function importSchema(
     }
   }
 
-  document.definitions = completeDefinitionPool(
-    flatten(allDefinitions),
-    firstSet,
-    flatten(typeDefinitions),
-  )
+  document = {
+    ...document,
+    definitions: completeDefinitionPool(
+      flatten(allDefinitions),
+      firstSet,
+      flatten(typeDefinitions),
+    ),
+  }
 
   // Return the schema as string
   return print(document)
@@ -237,7 +240,10 @@ function collectDefinitions(
   // Process each file (recursively)
   rawModules.forEach(m => {
     // If it was not yet processed (in case of circular dependencies)
-    const moduleFilePath = resolveModuleFilePath(filePath, m.from)
+    const moduleFilePath =
+      isFile(filePath) && isFile(m.from)
+        ? path.resolve(path.join(dirname, m.from))
+        : m.from
 
     const processedFile = processedFiles.get(key)
     if (!processedFile || !processedFile.find(rModule => isEqual(rModule, m))) {
@@ -269,7 +275,7 @@ function collectDefinitions(
  */
 function filterImportedDefinitions(
   imports: string[],
-  typeDefinitions: DefinitionNode[],
+  typeDefinitions: ReadonlyArray<DefinitionNode>,
   allDefinitions: ValidDefinitionNode[][] = [],
 ): ValidDefinitionNode[] {
   // This should do something smart with fields
@@ -304,9 +310,10 @@ function filterImportedDefinitions(
 
     for (const rootType in groupedFieldImports) {
       const fields = groupedFieldImports[rootType].map(x => x.split('.')[1])
-      ;(filteredDefinitions.find(
+      const rootDefinition = filteredDefinitions.find(
         def => def.name.value === rootType,
-      ) as ObjectTypeDefinitionNode).fields = (filteredDefinitions.find(
+      ) as ObjectTypeDefinitionNode
+      ;(rootDefinition as any).fields = (filteredDefinitions.find(
         def => def.name.value === rootType,
       ) as ObjectTypeDefinitionNode).fields.filter(
         f => includes(fields, f.name.value) || includes(fields, '*'),
@@ -324,7 +331,7 @@ function filterImportedDefinitions(
  * @returns Relevant type definitions
  */
 function filterTypeDefinitions(
-  definitions: DefinitionNode[],
+  definitions: ReadonlyArray<DefinitionNode>,
 ): ValidDefinitionNode[] {
   const validKinds = [
     'DirectiveDefinition',

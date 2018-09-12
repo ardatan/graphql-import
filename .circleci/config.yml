@@ -20,10 +20,6 @@ references:
           prefix: coverage
 
 jobs:
-  build-node4:
-    docker:
-      - image: circleci/node:4
-    <<: *run_tests
   build-node6:
     docker:
       - image: circleci/node:6
@@ -48,11 +44,9 @@ workflows:
   version: 2
   build:
     jobs:
-      - build-node4
       - build-node6
       - build-node8
       - release:
           requires: 
-            - build-node4
             - build-node6
             - build-node8
