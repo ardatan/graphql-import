@@ -130,7 +130,6 @@ export function importSchema(
       flatten(typeDefinitions),
     ),
   }
-
   // Return the schema as string
   return print(document)
 }
@@ -240,10 +239,7 @@ function collectDefinitions(
   // Process each file (recursively)
   rawModules.forEach(m => {
     // If it was not yet processed (in case of circular dependencies)
-    const moduleFilePath =
-      isFile(filePath) && isFile(m.from)
-        ? path.resolve(path.join(dirname, m.from))
-        : m.from
+    const moduleFilePath = resolveModuleFilePath(filePath, m.from)
 
     const processedFile = processedFiles.get(key)
     if (!processedFile || !processedFile.find(rModule => isEqual(rModule, m))) {
@@ -310,10 +306,9 @@ function filterImportedDefinitions(
 
     for (const rootType in groupedFieldImports) {
       const fields = groupedFieldImports[rootType].map(x => x.split('.')[1])
-      const rootDefinition = filteredDefinitions.find(
+      ;(filteredDefinitions.find(
         def => def.name.value === rootType,
-      ) as ObjectTypeDefinitionNode
-      ;(rootDefinition as any).fields = (filteredDefinitions.find(
+      ) as any).fields = (filteredDefinitions.find(
         def => def.name.value === rootType,
       ) as ObjectTypeDefinitionNode).fields.filter(
         f => includes(fields, f.name.value) || includes(fields, '*'),
