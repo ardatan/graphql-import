@@ -38,13 +38,13 @@
     "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0"
   },
   "devDependencies": {
-    "@types/graphql": "14.0.4",
+    "@types/graphql": "14.0.5",
     "@types/lodash": "4.14.119",
     "@types/resolve-from": "0.0.18",
     "@types/node": "9.6.41",
     "ava": "0.25.0",
     "ava-ts": "0.25.2",
-    "graphql": "14.0.2",
+    "graphql": "14.1.1",
     "nyc": "11.9.0",
     "tap-xunit": "2.3.0",
     "ts-node": "7.0.1",
