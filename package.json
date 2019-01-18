@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@types/graphql": "14.0.5",
-    "@types/lodash": "4.14.119",
+    "@types/lodash": "4.14.120",
     "@types/resolve-from": "0.0.18",
     "@types/node": "9.6.41",
     "ava": "0.25.0",
