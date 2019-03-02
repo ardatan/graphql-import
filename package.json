@@ -41,7 +41,7 @@
     "@types/graphql": "14.0.7",
     "@types/lodash": "4.14.121",
     "@types/resolve-from": "0.0.18",
-    "@types/node": "9.6.42",
+    "@types/node": "9.6.44",
     "ava": "0.25.0",
     "ava-ts": "0.25.2",
     "graphql": "14.1.1",
