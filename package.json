@@ -38,7 +38,7 @@
     "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0"
   },
   "devDependencies": {
-    "@types/graphql": "14.2.0",
+    "@types/graphql": "14.2.1",
     "@types/lodash": "4.14.134",
     "@types/resolve-from": "0.0.18",
     "@types/node": "9.6.49",
