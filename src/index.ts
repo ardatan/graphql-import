@@ -9,7 +9,7 @@ import {
   DocumentNode,
   Kind,
 } from 'graphql'
-import { flatten, groupBy, includes, keyBy, isEqual } from 'lodash'
+import { flatten, groupBy, includes, keyBy, isEqual, uniqBy } from 'lodash'
 import * as path from 'path'
 import * as resolveFrom from 'resolve-from'
 
@@ -102,10 +102,13 @@ export function importSchema(
   const firstTypes = flatten(typeDefinitions).filter(d =>
     includes(rootFields, d.name.value),
   )
-  const otherFirstTypes = typeDefinitions[0].filter(
+  const secondFirstTypes = typeDefinitions[0].filter(
     d => !includes(rootFields, d.name.value),
   )
-  const firstSet = firstTypes.concat(otherFirstTypes)
+  const otherFirstTypes = flatten(typeDefinitions.slice(1)).filter(
+    d => !includes(rootFields, d.name.value),
+  )
+  const firstSet = firstTypes.concat(secondFirstTypes, otherFirstTypes)
   const processedTypeNames = []
   const mergedFirstTypes = []
   for (const type of firstSet) {
@@ -116,9 +119,10 @@ export function importSchema(
       const existingType = mergedFirstTypes.find(
         t => t.name.value === type.name.value,
       )
-      existingType.fields = existingType.fields.concat(
+
+      existingType.fields = uniqBy(existingType.fields.concat(
         (type as ObjectTypeDefinitionNode).fields,
-      )
+      ), 'name.value')
     }
   }
 
@@ -332,6 +336,7 @@ function filterTypeDefinitions(
     'DirectiveDefinition',
     'ScalarTypeDefinition',
     'ObjectTypeDefinition',
+    'ObjectTypeExtension',
     'InterfaceTypeDefinition',
     'EnumTypeDefinition',
     'UnionTypeDefinition',

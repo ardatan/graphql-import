@@ -14,7 +14,7 @@ import {
 
 const builtinTypes = ['String', 'Float', 'Int', 'Boolean', 'ID']
 
-const builtinDirectives = ['deprecated', 'skip','include']
+const builtinDirectives = ['deprecated', 'skip','include', 'key', 'external', 'requires', 'provides']
 
 export type ValidDefinitionNode =
     | DirectiveDefinitionNode

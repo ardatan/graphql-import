@@ -310,12 +310,6 @@ type A {
   b: B
 }
 
-type B {
-  hello: String!
-  c1: C1
-  c2: C2
-}
-
 type C1 {
   id: ID!
 }
@@ -323,7 +317,14 @@ type C1 {
 type C2 {
   id: ID!
 }
+
+type B {
+  hello: String!
+  c1: C1
+  c2: C2
+}
 `
+
   t.is(importSchema(schemaA, schemas), expectedSDL)
 })
 
@@ -464,13 +465,69 @@ type A {
   second: String @withB @deprecated
 }
 
-directive @upper on FIELD_DEFINITION
-
 scalar B
+
+directive @upper on FIELD_DEFINITION
 
 directive @withB(argB: B) on FIELD_DEFINITION
 `
   t.is(importSchema('fixtures/directive/a.graphql'), expectedSDL)
+})
+
+test('importSchema: key directive', t => {
+  const expectedSDL = `\
+scalar UPC
+
+type Product @key(fields: "upc") {
+  upc: UPC!
+  name: String
+}
+`
+  t.is(importSchema('fixtures/directive/c.graphql'), expectedSDL)
+})
+
+test('importSchema: multiple key directive', t => {
+  const expectedSDL = `\
+scalar UPC
+
+scalar SKU
+
+type Product @key(fields: "upc") @key(fields: "sku") {
+  upc: UPC!
+  sku: SKU!
+  name: String
+}
+`
+  t.is(importSchema('fixtures/directive/e.graphql'), expectedSDL)
+})
+
+test('importSchema: external directive', t => {
+  const expectedSDL = `\
+type Review @key(fields: "id") {
+  product: Product @provides(fields: "name")
+}
+
+extend type Product @key(fields: "upc") {
+  upc: String @external
+  name: String @external
+}
+`
+  t.is(importSchema('fixtures/directive/f.graphql'), expectedSDL)
+})
+
+test('importSchema: requires directive', t => {
+  const expectedSDL = `\
+type Review {
+  id: ID
+}
+
+extend type User @key(fields: "id") {
+  id: ID! @external
+  email: String @external
+  reviews: [Review] @requires(fields: "email")
+}
+`
+  t.is(importSchema('fixtures/directive/g.graphql'), expectedSDL)
 })
 
 test('importSchema: interfaces', t => {
@@ -592,19 +649,19 @@ type A {
   b: B
 }
 
-type B {
-  hello: String!
-  c1: C1
-  c2: C2
-  a: A
-}
-
 type C1 {
   id: ID!
 }
 
 type C2 {
   id: ID!
+}
+
+type B {
+  hello: String!
+  c1: C1
+  c2: C2
+  a: A
 }
 `
   const actualSDL = importSchema('fixtures/circular/a.graphql')
@@ -677,6 +734,41 @@ input PostFilter {
 }
 `
   const actualSDL = importSchema('fixtures/root-fields/a.graphql')
+  t.is(actualSDL, expectedSDL)
+})
+
+test('extend root field', t => {
+  const expectedSDL = `\
+extend type Query {
+  me: User
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  name: String
+}
+`
+  const actualSDL = importSchema('fixtures/root-fields/c.graphql')
+  t.is(actualSDL, expectedSDL)
+})
+
+test('extend root field imports', t => {
+  const expectedSDL = `\
+extend type Query {
+  me: User
+  post: Post
+}
+
+type Post {
+  id: ID!
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  name: String
+}
+`
+  const actualSDL = importSchema('fixtures/root-fields/d.graphql')
   t.is(actualSDL, expectedSDL)
 })
 
@@ -803,6 +895,7 @@ test('import with collision', t => {
 type User {
   id: ID!
   name: String!
+  intro: String
 }
 `
   t.is(importSchema('fixtures/collision/a.graphql'), expectedSDL)
