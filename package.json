@@ -22,7 +22,6 @@
     "instrument": true
   },
   "scripts": {
-    "prepare": "npm run build",
     "build": "rm -rf dist && tsc -d",
     "testlocal":
       "npm run build && nyc --reporter lcov --reporter text ava-ts -u --verbose src/**/*.test.ts",
