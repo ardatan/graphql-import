@@ -44,7 +44,7 @@ function isGraphQLFile(f: string) {
  */
 export function parseImportLine(importLine: string): RawModule {
   // Apply regex to import line
-  const matches = importLine.match(/^import (\*|(.*)) from ('|")(.*)('|");?$/)
+  const matches = importLine.match(/^import\s+(\*|(.*))\s+from\s+('|")(.*)('|");?$/)
   if (!matches || matches.length !== 6 || !matches[4]) {
     throw new Error(`Too few regex matches: ${matches}`)
   }
