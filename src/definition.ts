@@ -1,9 +1,6 @@
 import { keyBy, uniqBy, includes } from 'lodash'
 import {
-  DocumentNode,
   TypeDefinitionNode,
-  ObjectTypeDefinitionNode,
-  InputObjectTypeDefinitionNode,
   TypeNode,
   NamedTypeNode,
   DirectiveNode,

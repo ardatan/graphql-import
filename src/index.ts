@@ -3,8 +3,6 @@ import {
   DefinitionNode,
   parse,
   print,
-  TypeDefinitionNode,
-  GraphQLObjectType,
   ObjectTypeDefinitionNode,
   DocumentNode,
   Kind,
