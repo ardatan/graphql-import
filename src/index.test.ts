@@ -117,6 +117,15 @@ type Query {
   t.is(importSchema('fixtures/imports-only/all.graphql'), expectedSDL)
 })
 
+test('importSchema: import .gql extension', t => {
+  const expectedSDL = `\
+type A {
+  id: ID!
+}
+`
+  t.is(importSchema('fixtures/import-gql/a.gql'), expectedSDL)
+})
+
 test('importSchema: import duplicate', t => {
   const expectedSDL = `\
 type Query {

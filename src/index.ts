@@ -25,13 +25,16 @@ export interface RawModule {
 const rootFields = ['Query', 'Mutation', 'Subscription']
 
 const read = (schema: string, schemas?: { [key: string]: string }) => {
-  if (isFile(schema)) {
+  if (isGraphQLFile(schema)) {
     return fs.readFileSync(schema, { encoding: 'utf8' })
   }
   return schemas ? schemas[schema] : schema
 }
 
-const isFile = f => f.endsWith('.graphql')
+const gqlExt = /\.g(raph)?ql$/
+function isGraphQLFile(f: string) {
+  return gqlExt.test(f)
+}
 
 /**
  * Parse a single import line and extract imported types and schema filename
@@ -179,7 +182,7 @@ function isEmptySDL(sdl: string): boolean {
  */
 function resolveModuleFilePath(filePath: string, importFrom: string): string {
   const dirname = path.dirname(filePath)
-  if (isFile(filePath) && isFile(importFrom)) {
+  if (isGraphQLFile(filePath) && isGraphQLFile(importFrom)) {
     try {
       return fs.realpathSync(path.join(dirname, importFrom))
     } catch (e) {
@@ -217,7 +220,7 @@ function collectDefinitions(
   allDefinitions: ValidDefinitionNode[][]
   typeDefinitions: ValidDefinitionNode[][]
 } {
-  const key = isFile(filePath) ? path.resolve(filePath) : filePath
+  const key = isGraphQLFile(filePath) ? path.resolve(filePath) : filePath
 
   // Get TypeDefinitionNodes from current schema
   const document = getDocumentFromSDL(sdl)

@@ -19,7 +19,7 @@ yarn add graphql-import
 import { importSchema } from 'graphql-import'
 import { makeExecutableSchema } from 'graphql-tools'
 
-const typeDefs = importSchema('schema.graphql')
+const typeDefs = importSchema('schema.graphql') // or .gql
 const resolvers = {}
 
 const schema = makeExecutableSchema({ typeDefs, resolvers })
