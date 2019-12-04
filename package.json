@@ -48,7 +48,7 @@
     "tslint": "5.20.1",
     "tslint-config-standard": "9.0.0",
     "typedoc": "0.15.3",
-    "typescript": "3.7.2"
+    "typescript": "3.7.3"
   },
   "dependencies": {
     "lodash": "4.17.15",
