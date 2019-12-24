@@ -1,3 +1,0 @@
-type Test implements MyInterface {
-    test: String
-}

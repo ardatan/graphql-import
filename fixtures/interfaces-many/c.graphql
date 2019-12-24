@@ -1,5 +1,0 @@
-# import D1, D2 from "d.graphql"
-
-type C implements D1 & D2 {
-  c: ID!
-}

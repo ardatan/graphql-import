@@ -1,8 +1,0 @@
-scalar UPC
-scalar SKU
-
-type Product @key(fields: "upc") @key(fields: "sku") {
-  upc: UPC!
-  sku: SKU!
-  name: String
-}

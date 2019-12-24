@@ -1,5 +1,0 @@
-# import C from 'c.graphql'
-
-input B {
-  hello: [C!]!
-}

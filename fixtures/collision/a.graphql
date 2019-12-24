@@ -1,6 +1,0 @@
-# import * from "b.graphql"
-
-type User {
-  id: ID!
-  name: String!
-}

@@ -1,3 +1,0 @@
-type U {
-  hello: String! @first
-}

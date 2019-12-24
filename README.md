@@ -1,6 +1,5 @@
 # graphql-import
 
-[![CircleCI](https://circleci.com/gh/prisma/graphql-import.svg?style=shield)](https://circleci.com/gh/prisma/graphql-import) [![npm version](https://badge.fury.io/js/graphql-import.svg)](https://badge.fury.io/js/graphql-import)
 [![Discord Chat](https://img.shields.io/discord/625400653321076807)](https://discord.gg/xud7bH9)
 
 Import &amp; export definitions in GraphQL SDL (also refered to as GraphQL modules)
@@ -19,10 +18,14 @@ yarn add graphql-import
 import { importSchema } from 'graphql-import'
 import { makeExecutableSchema } from 'graphql-tools'
 
-const typeDefs = importSchema('schema.graphql') // or .gql
-const resolvers = {}
+async function start() {
+  const typeDefs = await importSchema('schema.graphql'); // or .gql or glob pattern like **/*.graphql
+  const resolvers = {};
 
-const schema = makeExecutableSchema({ typeDefs, resolvers })
+  const schema = makeExecutableSchema({ typeDefs, resolvers })
+}
+
+main().catch(err => console.error(err));
 ```
 
 Assume the following directory structure:
@@ -66,7 +69,7 @@ type Comment {
 }
 ```
 
-Running `console.log(importSchema('schema.graphql'))` produces the following output:
+Running `console.log(await importSchema('schema.graphql'))` produces the following output:
 
 ```graphql
 type Query {

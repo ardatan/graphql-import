@@ -1,7 +1,0 @@
-interface D1 {
-  d1: ID!
-}
-
-interface D2 {
-  d2: ID!
-}

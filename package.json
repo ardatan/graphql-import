@@ -1,16 +1,20 @@
 {
   "name": "graphql-import",
-  "version": "0.0.0-semantic-release",
+  "version": "0.7.1",
   "engines": {
     "node": ">=4.0.0"
   },
   "license": "MIT",
-  "repository": "git@github.com:Urigo/graphql-import.git",
-  "files": ["dist"],
-  "main": "dist/index.js",
+  "repository": "git@github.com:ardatan/graphql-import.git",
+  "sideEffects": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
+  },
+  "buildOptions": {
+    "input": "./src/index.ts"
   },
   "nyc": {
     "extension": [".ts"],
@@ -22,12 +26,12 @@
     "instrument": true
   },
   "scripts": {
-    "build": "rm -rf dist && tsc -d",
-    "testlocal":
-      "npm run build && nyc --reporter lcov --reporter text ava-ts -u --verbose src/**/*.test.ts",
-    "test-only":
-      "npm run build && mkdir -p ~/reports && nyc --reporter lcov ava-ts --verbose src/**/*.test.ts --tap | tap-xunit > ~/reports/ava.xml",
-    "test": "tslint src/**/*.ts && npm run test-only",
+    "clean": "rimraf dist",
+    "prebuild": "yarn clean",
+    "build": "bob",
+    "prepack": "bob-update-version",
+    "test": "jest --no-watchman --passWithNoTests",
+    "ci:release:canary": "node bump.js && npm publish --tag alpha",
     "docs":
       "typedoc --out docs src/index.ts --hideGenerator --exclude **/*.test.ts",
     "docs:publish":
@@ -37,12 +41,17 @@
     "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0"
   },
   "devDependencies": {
+    "bob-the-bundler": "0.2.2",
+    "@types/jest": "24.0.24",
+    "jest": "24.9.0",
+    "ts-jest": "24.2.0",
     "@types/lodash": "4.14.149",
-    "@types/node": "12.12.22",
+    "@types/node": "13.1.0",
     "ava": "2.4.0",
     "ava-ts": "0.25.2",
     "graphql": "14.5.8",
     "nyc": "15.0.0",
+    "semver": "7.1.1",
     "tap-xunit": "2.4.1",
     "ts-node": "8.5.4",
     "tslint": "5.20.1",
@@ -51,6 +60,15 @@
     "typescript": "3.7.4"
   },
   "dependencies": {
+    "@graphql-toolkit/apollo-engine-loader": "0.7.5",
+    "@graphql-toolkit/core": "0.7.5",
+    "@graphql-toolkit/code-file-loader": "0.7.5",
+    "@graphql-toolkit/url-loader": "0.7.5",
+    "@graphql-toolkit/json-file-loader": "0.7.5",
+    "@graphql-toolkit/graphql-file-loader": "0.7.5",
+    "@graphql-toolkit/git-loader": "0.7.5",
+    "@graphql-toolkit/github-loader": "0.7.5",
+    "@graphql-toolkit/prisma-loader": "0.7.5",
     "lodash": "4.17.15",
     "resolve-from": "5.0.0"
   }

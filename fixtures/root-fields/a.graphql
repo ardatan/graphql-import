@@ -1,5 +1,0 @@
-# import Query.posts from 'b.graphql'
-
-type Dummy {
-  field: String
-}

@@ -1,3 +1,0 @@
-interface Boo {
-    test: Post
-}

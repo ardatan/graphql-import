@@ -1,15 +1,23 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    "experimentalDecorators": true,
+    "module": "esnext",
+    "target": "es2018",
+    "lib": ["esnext"],
+    "suppressImplicitAnyIndexErrors": true,
     "moduleResolution": "node",
-    "module": "commonjs",
+    "emitDecoratorMetadata": true,
     "sourceMap": true,
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "lib": [
-      "dom", "esnext"
-    ],
-    "skipLibCheck": true
+    "declaration": true,
+    "outDir": "./dist/",
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   },
-  "exclude": ["node_modules", "dist", "examples"]
+  "exclude": ["node_modules", "tests", "dist"]
 }

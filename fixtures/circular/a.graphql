@@ -1,7 +1,0 @@
-# import * from "b.graphql"
-
-type A {
-  first: String
-  second: Float
-  b: B
-}

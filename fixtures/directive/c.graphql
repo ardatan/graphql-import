@@ -1,6 +1,0 @@
-scalar UPC
-
-type Product @key(fields: "upc") {
-  upc: UPC!
-  name: String
-}

@@ -1,3 +1,0 @@
-# import C1, C2 from "c.graphql"
-
-union B = C1 | C2

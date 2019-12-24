@@ -1,7 +1,0 @@
-interface B {
-  id: ID!
-}
-
-type B1 implements B {
-  id: ID!
-}

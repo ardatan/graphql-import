@@ -1,6 +1,0 @@
-# import C from 'c.graphql'
-
-type B {
-  c: C
-  hello: String!
-}
