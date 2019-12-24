@@ -64,76 +64,85 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<h1 id="graphql-import">graphql-import</h1>
-				<p><a href="https://travis-ci.org/graphcool/graphql-import"><img src="https://travis-ci.org/graphcool/graphql-import.svg?branch=master" alt="Build Status"></a> <a href="https://badge.fury.io/js/graphql-import"><img src="https://badge.fury.io/js/graphql-import.svg" alt="npm version"></a></p>
+				<a href="#graphql-import" id="graphql-import" style="color: inherit; text-decoration: none;">
+					<h1>graphql-import</h1>
+				</a>
+				<p><a href="https://discord.gg/xud7bH9"><img src="https://img.shields.io/discord/625400653321076807" alt="Discord Chat"></a></p>
 				<p>Import &amp; export definitions in GraphQL SDL (also refered to as GraphQL modules)</p>
-				<h2 id="install">Install</h2>
-				<pre><code class="lang-sh">yarn add graphql-import
-</code></pre>
-				<h2 id="usage">Usage</h2>
-				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { importSchema } <span class="hljs-keyword">from</span> <span class="hljs-string">'graphql-import'</span>
+				<blockquote>
+					<p>There is also a <a href="https://github.com/prisma/graphql-import-loader"><code>graphql-import-loader</code></a> for Webpack available.</p>
+				</blockquote>
+				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+					<h2>Install</h2>
+				</a>
+				<pre><code class="language-sh">yarn add graphql-import</code></pre>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { importSchema } <span class="hljs-keyword">from</span> <span class="hljs-string">'graphql-import'</span>
 <span class="hljs-keyword">import</span> { makeExecutableSchema } <span class="hljs-keyword">from</span> <span class="hljs-string">'graphql-tools'</span>
 
-<span class="hljs-keyword">const</span> typeDefs = importSchema(<span class="hljs-string">'schema.graphql'</span>)
-<span class="hljs-keyword">const</span> resolvers = {}
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">start</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">const</span> typeDefs = <span class="hljs-keyword">await</span> importSchema(<span class="hljs-string">'schema.graphql'</span>); <span class="hljs-comment">// or .gql or glob pattern like **/*.graphql</span>
+  <span class="hljs-keyword">const</span> resolvers = {};
 
-<span class="hljs-keyword">const</span> schema = makeExecutableSchema({ typeDefs, resolvers })
-</code></pre>
-				<h2 id="example">Example</h2>
+  <span class="hljs-keyword">const</span> schema = makeExecutableSchema({ typeDefs, resolvers })
+}
+
+main().catch(<span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> <span class="hljs-built_in">console</span>.error(err));</code></pre>
 				<p>Assume the following directory structure:</p>
 				<pre><code>.
-├── <span class="hljs-selector-tag">a</span><span class="hljs-selector-class">.graphql</span>
-├── <span class="hljs-selector-tag">b</span><span class="hljs-selector-class">.graphql</span>
-└── c.graphql
-</code></pre><p><code>a.graphql</code></p>
-				<pre><code class="lang-graphql"># import B from &quot;b.graphql&quot;
+├── <span class="hljs-selector-tag">schema</span><span class="hljs-selector-class">.graphql</span>
+├── <span class="hljs-selector-tag">posts</span><span class="hljs-selector-class">.graphql</span>
+└── <span class="hljs-selector-tag">comments</span><span class="hljs-selector-class">.graphql</span></code></pre><p><code>schema.graphql</code></p>
+				<pre><code class="language-graphql"># import Post from &quot;posts.graphql&quot;
 
-type A {
-  # test 1
-  first: String
-  second: Float
-  b: B
-}
-</code></pre>
-				<p><code>b.graphql</code></p>
-				<pre><code class="lang-graphql"># import C from &#39;c.graphql&#39;
+type Query {
+  posts: [Post]
+}</code></pre>
+				<p><code>posts.graphql</code></p>
+				<pre><code class="language-graphql"># import Comment from &#39;comments.graphql&#39;
 
-type B {
-  c: C
-  hello: String!
-}
-</code></pre>
-				<p><code>c.graphql</code></p>
-				<pre><code class="lang-graphql">type C {
+type Post {
+  comments: [Comment]
   id: ID!
-}
-</code></pre>
-				<p>Running <code>console.log(importSchema(&#39;a.graphql&#39;))</code> procudes the following output:</p>
-				<pre><code class="lang-graphql">type A {
-  first: String
-  second: Float
-  b: B
-}
-
-type B {
-  c: C
-  hello: String!
-}
-
-type C {
+  text: String!
+  tags: [String]
+}</code></pre>
+				<p><code>comments.graphql</code></p>
+				<pre><code class="language-graphql">type Comment {
   id: ID!
+  text: String!
+}</code></pre>
+				<p>Running <code>console.log(await importSchema(&#39;schema.graphql&#39;))</code> produces the following output:</p>
+				<pre><code class="language-graphql">type Query {
+  posts: [Post]
 }
-</code></pre>
-				<p>Please refer to <a href="https://github.com/graphcool/graphql-import/blob/master/src/index.test.ts"><code>src/index.test.ts</code></a> for more examples.</p>
-				<h2 id="development">Development</h2>
-				<p>The <a href="https://graphql-import.now.sh/">implementation documentation</a> documents how things are implemented under the hood. You can also use the VSCode test setup to debug your code/tests.</p>
-				<h2 id="related-topics-next-steps">Related topics &amp; next steps</h2>
+
+type Post {
+  comments: [Comment]
+  id: ID!
+  text: String!
+  tags: [String]
+}
+
+type Comment {
+  id: ID!
+  text: String!
+}</code></pre>
+				<a href="#a-hrefhttpsossprismaiocontentgraphql-importoverviewfull-documentationa" id="a-hrefhttpsossprismaiocontentgraphql-importoverviewfull-documentationa" style="color: inherit; text-decoration: none;">
+					<h2><a href="https://oss.prisma.io/content/graphql-import/overview">Full documentation</a></h2>
+				</a>
+				<a href="#related-topics-amp-next-steps" id="related-topics-amp-next-steps" style="color: inherit; text-decoration: none;">
+					<h2>Related topics &amp; next steps</h2>
+				</a>
 				<ul>
 					<li>Static import step as build time</li>
 					<li>Namespaces</li>
 					<li>Support importing from HTTP endpoints (or <a href="https://github.com/apollographql/apollo-link">Links</a>)</li>
 					<li>Create RFC to add import syntax to GraphQL spec</li>
 				</ul>
+				<p align="center"><a href="https://oss.prisma.io"><img src="https://imgur.com/IMU2ERq.png" alt="Prisma" height="170px"></a></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -142,17 +151,8 @@ type C {
 					<li class="globals  ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
-					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_index_.html">"index"</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_definition_.html">"definition"</a>
+						<a href="modules/_index_.html">&quot;index&quot;</a>
 					</li>
 				</ul>
 			</nav>
@@ -175,6 +175,7 @@ type C {
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>

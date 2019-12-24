@@ -8,7 +8,7 @@ import { GithubLoader } from '@graphql-toolkit/github-loader'
 import { ApolloEngineLoader } from '@graphql-toolkit/apollo-engine-loader'
 import { PrismaLoader } from '@graphql-toolkit/prisma-loader'
 import { print, BuildSchemaOptions } from 'graphql'
-import { mergeTypeDefs } from '@graphql-toolkit/schema-merging';
+import { mergeTypeDefs } from '@graphql-toolkit/schema-merging'
 
 const DEFAULT_SCHEMA_LOADERS = [
   new UrlLoader(),
@@ -27,7 +27,7 @@ export const importSchema = async (
   out: 'string' | 'DocumentNode' | 'GraphQLSchema' = 'string',
 ) => {
   if (out === 'GraphQLSchema') {
-    return loadSchemaUsingLoaders(DEFAULT_SCHEMA_LOADERS, schema, {...options, forceGraphQLImport: true });
+    return loadSchemaUsingLoaders(DEFAULT_SCHEMA_LOADERS, schema, { ...options, forceGraphQLImport: true })
   } else {
     const results = await loadTypedefsUsingLoaders(DEFAULT_SCHEMA_LOADERS, schema, { ...options, forceGraphQLImport: true }, OPERATION_KINDS)
     const mergedDocuments = mergeTypeDefs(results.map(r => r.document))
