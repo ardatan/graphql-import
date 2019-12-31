@@ -2,14 +2,10 @@
 
 [![Discord Chat](https://img.shields.io/discord/625400653321076807)](https://discord.gg/xud7bH9)
 
-Import &amp; export definitions in GraphQL SDL (also refered to as GraphQL modules)
-
-> There is also a [`graphql-import-loader`](https://github.com/prisma/graphql-import-loader) for Webpack available.
-
 ## Install
 
 ```sh
-yarn add graphql-import
+yarn add graphql-import@beta
 ```
 
 ## Usage
@@ -69,7 +65,7 @@ type Comment {
 }
 ```
 
-Running `console.log(await importSchema('schema.graphql'))` produces the following output:
+Running `importSchema('schema.graphql')` produces the following output:
 
 ```graphql
 type Query {
@@ -89,14 +85,34 @@ type Comment {
 }
 ```
 
-## [Full documentation](https://oss.prisma.io/content/graphql-import/overview)
 
-## Related topics & next steps
+## Updating from 0.7.x
+Install the new version as in `Install` step and after that update your code as in `Usage` step because `importSchema` is not sync anymore and returns promise,. We recommend you to use `async/await` to make the migration simple.
+The second parameter is now `options`. 
+If you want to provide preresolved type definitions as in `0.7.x`, use the method below;
+Before
 
-- Static import step as build time
-- Namespaces
-- Support importing from HTTP endpoints (or [Links](https://github.com/apollographql/apollo-link))
-- Create RFC to add import syntax to GraphQL spec
+```ts
+const finalSchema = importSchema('somePointer', {
+  'mySchema': `
+      type Query {
+        foo: String
+      }
+    `
+})
+```
 
-<p align="center"><a href="https://oss.prisma.io"><img src="https://imgur.com/IMU2ERq.png" alt="Prisma" height="170px"></a></p>
-
+After
+```ts
+const finalSchema = await importSchema('somePointer', {
+  cache: {
+    'mySchema': {
+      rawSDL: `
+        type Query {
+          foo: String
+        }
+      `
+    }
+  }
+})
+```

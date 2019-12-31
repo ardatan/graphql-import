@@ -1,7 +1,7 @@
-import { loadTypedefsUsingLoaders, OPERATION_KINDS, LoadTypedefsOptions, loadSchemaUsingLoaders } from '@graphql-toolkit/core'
+import { loadTypedefs, OPERATION_KINDS, LoadTypedefsOptions, loadSchema } from '@graphql-toolkit/core'
 import { UrlLoader } from '@graphql-toolkit/url-loader'
 import { JsonFileLoader } from '@graphql-toolkit/json-file-loader'
-import { GraphQLFileLoader, GraphQLFileLoaderOptions } from '@graphql-toolkit/graphql-file-loader'
+import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader'
 import { CodeFileLoader, CodeFileLoaderOptions } from '@graphql-toolkit/code-file-loader'
 import { GitLoader } from '@graphql-toolkit/git-loader'
 import { GithubLoader } from '@graphql-toolkit/github-loader'
@@ -23,13 +23,22 @@ const DEFAULT_SCHEMA_LOADERS = [
 
 export const importSchema = async (
   schema: string,
-  options: BuildSchemaOptions & LoadTypedefsOptions<CodeFileLoaderOptions | GraphQLFileLoaderOptions> = {},
+  options: BuildSchemaOptions & Partial<LoadTypedefsOptions<CodeFileLoaderOptions>> = {},
   out: 'string' | 'DocumentNode' | 'GraphQLSchema' = 'string',
 ) => {
   if (out === 'GraphQLSchema') {
-    return loadSchemaUsingLoaders(DEFAULT_SCHEMA_LOADERS, schema, { ...options, forceGraphQLImport: true })
+    return loadSchema(schema, { 
+      loaders: DEFAULT_SCHEMA_LOADERS, 
+      forceGraphQLImport: true,
+      ...options 
+    });
   } else {
-    const results = await loadTypedefsUsingLoaders(DEFAULT_SCHEMA_LOADERS, schema, { ...options, forceGraphQLImport: true }, OPERATION_KINDS)
+    const results = await loadTypedefs(schema, { 
+      loaders: DEFAULT_SCHEMA_LOADERS, 
+      forceGraphQLImport: true,
+      filterKinds: OPERATION_KINDS,
+      ...options 
+    });
     const mergedDocuments = mergeTypeDefs(results.map(r => r.document))
     if (out === 'DocumentNode') {
       return mergedDocuments
