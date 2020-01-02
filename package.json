@@ -68,7 +68,7 @@
     "@graphql-toolkit/graphql-file-loader": "0.8.1",
     "@graphql-toolkit/git-loader": "0.8.1",
     "@graphql-toolkit/github-loader": "0.8.1",
-    "@graphql-toolkit/prisma-loader": "0.8.0",
+    "@graphql-toolkit/prisma-loader": "0.8.1",
     "lodash": "4.17.15",
     "resolve-from": "5.0.0"
   }
