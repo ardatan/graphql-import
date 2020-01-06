@@ -2,6 +2,7 @@
   "extends": ["tslint-config-standard"],
   "rules": {
     "space-before-function-paren": false,
+    "unified-signatures": false,
     "trailing-comma": [
       true,
       {
