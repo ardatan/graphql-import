@@ -60,7 +60,7 @@
     "typescript": "3.7.5"
   },
   "dependencies": {
-    "@graphql-toolkit/apollo-engine-loader": "0.9.2",
+    "@graphql-toolkit/apollo-engine-loader": "0.9.3",
     "@graphql-toolkit/core": "0.9.1",
     "@graphql-toolkit/code-file-loader": "0.9.2",
     "@graphql-toolkit/url-loader": "0.9.1",
