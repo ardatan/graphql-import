@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "@graphql-toolkit/apollo-engine-loader": "0.9.6",
-    "@graphql-toolkit/core": "0.9.5",
+    "@graphql-toolkit/core": "0.9.6",
     "@graphql-toolkit/code-file-loader": "0.9.6",
     "@graphql-toolkit/url-loader": "0.9.5",
     "@graphql-toolkit/json-file-loader": "0.9.5",
