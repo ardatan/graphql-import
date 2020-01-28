@@ -1,9 +1,6 @@
 {
   "name": "graphql-import",
-  "version": "1.0.0-beta.1",
-  "engines": {
-    "node": ">=4.0.0"
-  },
+  "version": "1.0.0-beta.2",
   "license": "MIT",
   "repository": "git@github.com:ardatan/graphql-import.git",
   "sideEffects": false,
@@ -15,15 +12,6 @@
   },
   "buildOptions": {
     "input": "./src/index.ts"
-  },
-  "nyc": {
-    "extension": [".ts"],
-    "require": ["ts-node/register"],
-    "include": ["src/**/*.ts"],
-    "exclude": ["**/*.d.ts", "**/*.test.ts"],
-    "all": true,
-    "sourceMap": true,
-    "instrument": true
   },
   "scripts": {
     "clean": "rimraf dist",
@@ -41,19 +29,13 @@
     "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0"
   },
   "devDependencies": {
-    "bob-the-bundler": "0.2.2",
+    "@ardatan/bob": "0.2.7",
     "@types/jest": "25.1.0",
     "jest": "24.9.0",
     "ts-jest": "25.0.0",
     "@types/lodash": "4.14.149",
     "@types/node": "13.5.0",
-    "ava": "3.1.0",
-    "ava-ts": "0.25.2",
     "graphql": "14.6.0",
-    "nyc": "15.0.0",
-    "semver": "7.1.1",
-    "tap-xunit": "2.4.1",
-    "ts-node": "8.6.2",
     "tslint": "5.20.1",
     "tslint-config-standard": "9.0.0",
     "typedoc": "0.16.9",
@@ -63,13 +45,11 @@
     "@graphql-toolkit/apollo-engine-loader": "0.9.6",
     "@graphql-toolkit/core": "0.9.6",
     "@graphql-toolkit/code-file-loader": "0.9.6",
-    "@graphql-toolkit/url-loader": "0.9.5",
+    "@graphql-toolkit/url-loader": "0.9.6",
     "@graphql-toolkit/json-file-loader": "0.9.5",
     "@graphql-toolkit/graphql-file-loader": "0.9.6",
-    "@graphql-toolkit/git-loader": "0.9.5",
+    "@graphql-toolkit/git-loader": "0.9.6",
     "@graphql-toolkit/github-loader": "0.9.6",
-    "@graphql-toolkit/prisma-loader": "0.9.5",
-    "lodash": "4.17.15",
-    "resolve-from": "5.0.0"
+    "@graphql-toolkit/prisma-loader": "0.9.6"
   }
 }

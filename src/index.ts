@@ -1,4 +1,4 @@
-import { loadTypedefs, OPERATION_KINDS, LoadTypedefsOptions, loadSchema } from '@graphql-toolkit/core'
+import { loadTypedefs, OPERATION_KINDS, LoadTypedefsOptions, loadSchema, LoadSchemaOptions } from '@graphql-toolkit/core'
 import { UrlLoader } from '@graphql-toolkit/url-loader'
 import { JsonFileLoader } from '@graphql-toolkit/json-file-loader'
 import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader'
@@ -7,7 +7,7 @@ import { GitLoader } from '@graphql-toolkit/git-loader'
 import { GithubLoader } from '@graphql-toolkit/github-loader'
 import { ApolloEngineLoader } from '@graphql-toolkit/apollo-engine-loader'
 import { PrismaLoader } from '@graphql-toolkit/prisma-loader'
-import { print, BuildSchemaOptions, DocumentNode, GraphQLSchema } from 'graphql'
+import { print, DocumentNode, GraphQLSchema, parse } from 'graphql'
 import { mergeTypeDefs } from '@graphql-toolkit/schema-merging'
 
 const DEFAULT_SCHEMA_LOADERS = [
@@ -21,28 +21,30 @@ const DEFAULT_SCHEMA_LOADERS = [
   new PrismaLoader()
 ]
 
+export type ImportSchemaOptions = Partial<LoadSchemaOptions & LoadTypedefsOptions<CodeFileLoaderOptions>>
+
 export async function importSchema(
   schema: string,
-  options: BuildSchemaOptions & Partial<LoadTypedefsOptions<CodeFileLoaderOptions>>,
+  options?: ImportSchemaOptions,
 ): Promise<string>
 export async function importSchema(
   schema: string,
-  options: BuildSchemaOptions & Partial<LoadTypedefsOptions<CodeFileLoaderOptions>>,
+  options: ImportSchemaOptions,
   out: 'string',
 ): Promise<string>
 export async function importSchema(
   schema: string,
-  options: BuildSchemaOptions & Partial<LoadTypedefsOptions<CodeFileLoaderOptions>>,
+  options: ImportSchemaOptions,
   out: 'DocumentNode',
 ): Promise<DocumentNode>
 export async function importSchema(
   schema: string,
-  options: BuildSchemaOptions & Partial<LoadTypedefsOptions<CodeFileLoaderOptions>>,
+  options: ImportSchemaOptions,
   out: 'GraphQLSchema',
 ): Promise<GraphQLSchema>
 export async function importSchema(
   schema: string,
-  options: BuildSchemaOptions & Partial<LoadTypedefsOptions<CodeFileLoaderOptions>> = {},
+  options: ImportSchemaOptions = {},
   out: 'string' | 'DocumentNode' | 'GraphQLSchema' = 'string',
 ) {
 
@@ -51,6 +53,7 @@ export async function importSchema(
     filterKinds: OPERATION_KINDS,
     sort: false,
     forceGraphQLImport: true,
+    useSchemaDefinition: false,
     ...options,
   }
 
@@ -58,11 +61,20 @@ export async function importSchema(
     return loadSchema(schema, allOptions)
   } else {
     const results = await loadTypedefs(schema, allOptions)
-    const mergedDocuments = mergeTypeDefs(results.map(r => r.document), { useSchemaDefinition: false })
+    const mergedDocuments = mergeTypeDefs(results.map(r => r.document), allOptions)
     if (out === 'DocumentNode') {
-      return mergedDocuments
+      if (typeof mergedDocuments === 'string') {
+        return parse(mergedDocuments)
+      } else {
+        return mergedDocuments
+      }
     } else {
-      return print(mergedDocuments)
+      if (typeof mergedDocuments === 'string') {
+        return mergedDocuments
+      } else if (mergedDocuments) {
+        return print(mergedDocuments)
+      }
+      return ''
     }
   }
 }
