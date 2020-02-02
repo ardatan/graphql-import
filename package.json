@@ -19,6 +19,7 @@
     "build": "bob",
     "prepack": "bob-update-version",
     "test": "jest --no-watchman --passWithNoTests",
+    "lint": "tslint src/**/*.ts",
     "ci:release:canary": "node bump.js && npm publish --tag alpha",
     "docs":
       "typedoc --out docs src/index.ts --hideGenerator --exclude **/*.test.ts",
@@ -46,10 +47,11 @@
     "@graphql-toolkit/core": "0.9.7",
     "@graphql-toolkit/code-file-loader": "0.9.7",
     "@graphql-toolkit/url-loader": "0.9.7",
-    "@graphql-toolkit/json-file-loader": "0.9.7",
+    "@graphql-toolkit/json-file-loader": "0.9.5",
     "@graphql-toolkit/graphql-file-loader": "0.9.7",
     "@graphql-toolkit/git-loader": "0.9.7",
     "@graphql-toolkit/github-loader": "0.9.7",
-    "@graphql-toolkit/prisma-loader": "0.9.7"
+    "@graphql-toolkit/prisma-loader": "0.9.7",
+    "@graphql-toolkit/schema-merging": "0.9.7"
   }
 }

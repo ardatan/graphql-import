@@ -1,14 +1,14 @@
-import { loadTypedefs, OPERATION_KINDS, LoadTypedefsOptions, loadSchema, LoadSchemaOptions } from '@graphql-toolkit/core'
-import { UrlLoader } from '@graphql-toolkit/url-loader'
-import { JsonFileLoader } from '@graphql-toolkit/json-file-loader'
-import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader'
-import { CodeFileLoader, CodeFileLoaderOptions } from '@graphql-toolkit/code-file-loader'
-import { GitLoader } from '@graphql-toolkit/git-loader'
-import { GithubLoader } from '@graphql-toolkit/github-loader'
-import { ApolloEngineLoader } from '@graphql-toolkit/apollo-engine-loader'
-import { PrismaLoader } from '@graphql-toolkit/prisma-loader'
-import { print, DocumentNode, GraphQLSchema, parse } from 'graphql'
-import { mergeTypeDefs } from '@graphql-toolkit/schema-merging'
+import { loadTypedefs, OPERATION_KINDS, LoadTypedefsOptions, loadSchema, LoadSchemaOptions, UnnormalizedTypeDefPointer } from '@graphql-toolkit/core';
+import { UrlLoader } from '@graphql-toolkit/url-loader';
+import { JsonFileLoader } from '@graphql-toolkit/json-file-loader';
+import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
+import { CodeFileLoader, CodeFileLoaderOptions } from '@graphql-toolkit/code-file-loader';
+import { GitLoader } from '@graphql-toolkit/git-loader';
+import { GithubLoader } from '@graphql-toolkit/github-loader';
+import { ApolloEngineLoader } from '@graphql-toolkit/apollo-engine-loader';
+import { PrismaLoader } from '@graphql-toolkit/prisma-loader';
+import { print, DocumentNode, GraphQLSchema, parse } from 'graphql';
+import { mergeTypeDefs } from '@graphql-toolkit/schema-merging';
 
 const DEFAULT_SCHEMA_LOADERS = [
   new UrlLoader(),
@@ -19,33 +19,30 @@ const DEFAULT_SCHEMA_LOADERS = [
   new GithubLoader(),
   new ApolloEngineLoader(),
   new PrismaLoader()
-]
+];
 
-export type ImportSchemaOptions = Partial<LoadSchemaOptions & LoadTypedefsOptions<CodeFileLoaderOptions>>
+export type ImportSchemaOptions<T = {}> = Partial<LoadSchemaOptions & LoadTypedefsOptions<CodeFileLoaderOptions>> & T;
+
+type PointerOrPointers = UnnormalizedTypeDefPointer | UnnormalizedTypeDefPointer[];
 
 export async function importSchema(
-  schema: string,
-  options?: ImportSchemaOptions,
-): Promise<string>
+  pointerOrPointers: PointerOrPointers,
+): Promise<string>;
 export async function importSchema(
-  schema: string,
-  options: ImportSchemaOptions,
-  out: 'string',
-): Promise<string>
+  pointerOrPointers: PointerOrPointers,
+  options: ImportSchemaOptions<{ out?: 'string' }>,
+): Promise<string>;
 export async function importSchema(
-  schema: string,
-  options: ImportSchemaOptions,
-  out: 'DocumentNode',
-): Promise<DocumentNode>
+  pointerOrPointers: PointerOrPointers,
+  options: ImportSchemaOptions<{ out: 'DocumentNode' }>,
+): Promise<DocumentNode>;
 export async function importSchema(
-  schema: string,
-  options: ImportSchemaOptions,
-  out: 'GraphQLSchema',
-): Promise<GraphQLSchema>
+  pointerOrPointers: PointerOrPointers,
+  options: ImportSchemaOptions<{ out: 'GraphQLSchema' }>,
+): Promise<GraphQLSchema>;
 export async function importSchema(
-  schema: string,
+  pointerOrPointers: PointerOrPointers,
   options: ImportSchemaOptions = {},
-  out: 'string' | 'DocumentNode' | 'GraphQLSchema' = 'string',
 ) {
 
   const allOptions = {
@@ -55,26 +52,28 @@ export async function importSchema(
     forceGraphQLImport: true,
     useSchemaDefinition: false,
     ...options,
-  }
+  };
+
+  const out = options.out;
 
   if (out === 'GraphQLSchema') {
-    return loadSchema(schema, allOptions)
+    return loadSchema(pointerOrPointers, allOptions);
   } else {
-    const results = await loadTypedefs(schema, allOptions)
-    const mergedDocuments = mergeTypeDefs(results.map(r => r.document), allOptions)
+    const results = await loadTypedefs(pointerOrPointers, allOptions);
+    const mergedDocuments = mergeTypeDefs(results.map(r => r.document), allOptions);
     if (out === 'DocumentNode') {
       if (typeof mergedDocuments === 'string') {
-        return parse(mergedDocuments)
+        return parse(mergedDocuments);
       } else {
-        return mergedDocuments
+        return mergedDocuments;
       }
     } else {
       if (typeof mergedDocuments === 'string') {
-        return mergedDocuments
+        return mergedDocuments;
       } else if (mergedDocuments) {
-        return print(mergedDocuments)
+        return print(mergedDocuments);
       }
-      return ''
+      return '';
     }
   }
 }
