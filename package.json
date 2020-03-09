@@ -40,7 +40,7 @@
     "tslint": "5.20.1",
     "tslint-config-standard": "9.0.0",
     "typedoc": "0.16.9",
-    "typescript": "3.7.5"
+    "typescript": "3.8.3"
   },
   "dependencies": {
     "@graphql-toolkit/apollo-engine-loader": "0.9.7",
