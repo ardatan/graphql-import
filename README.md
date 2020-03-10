@@ -1,3 +1,4 @@
+![IMPORT_1](https://user-images.githubusercontent.com/25294569/76310705-fc621b00-62d7-11ea-9643-1670cfe6be18.gif)
 # graphql-import
 
 [![Discord Chat](https://img.shields.io/discord/625400653321076807)](https://discord.gg/xud7bH9)
