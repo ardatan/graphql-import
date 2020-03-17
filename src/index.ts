@@ -1,4 +1,4 @@
-import { loadTypedefs, OPERATION_KINDS, LoadTypedefsOptions, loadSchema, LoadSchemaOptions, UnnormalizedTypeDefPointer } from '@graphql-toolkit/core';
+import { loadTypedefsSync, OPERATION_KINDS, LoadTypedefsOptions, loadSchemaSync, LoadSchemaOptions, UnnormalizedTypeDefPointer } from '@graphql-toolkit/core';
 import { UrlLoader } from '@graphql-toolkit/url-loader';
 import { JsonFileLoader } from '@graphql-toolkit/json-file-loader';
 import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
@@ -25,25 +25,37 @@ export type ImportSchemaOptions<T = {}> = Partial<LoadSchemaOptions & LoadTypede
 
 type PointerOrPointers = UnnormalizedTypeDefPointer | UnnormalizedTypeDefPointer[];
 
-export async function importSchema(
+export function importSchema(
   pointerOrPointers: PointerOrPointers,
-): Promise<string>;
-export async function importSchema(
+  schemas: { [key: string]: string },
+): string;
+export function importSchema(
   pointerOrPointers: PointerOrPointers,
+  schemas: { [key: string]: string },
   options: ImportSchemaOptions<{ out?: 'string' }>,
-): Promise<string>;
-export async function importSchema(
+): string;
+export function importSchema(
   pointerOrPointers: PointerOrPointers,
+  schemas: { [key: string]: string },
   options: ImportSchemaOptions<{ out: 'DocumentNode' }>,
-): Promise<DocumentNode>;
-export async function importSchema(
+): DocumentNode;
+export function importSchema(
   pointerOrPointers: PointerOrPointers,
+  schemas: { [key: string]: string },
   options: ImportSchemaOptions<{ out: 'GraphQLSchema' }>,
-): Promise<GraphQLSchema>;
-export async function importSchema(
+): GraphQLSchema;
+export function importSchema(
   pointerOrPointers: PointerOrPointers,
+  schemas: { [key: string]: string },
   options: ImportSchemaOptions = {},
 ) {
+
+  for (const key in schemas) {
+    options.cache = options.cache || {};
+    options.cache[key] = {
+      rawSDL: schemas[key],
+    };
+  }
 
   const allOptions = {
     loaders: DEFAULT_SCHEMA_LOADERS,
@@ -57,9 +69,9 @@ export async function importSchema(
   const out = options.out;
 
   if (out === 'GraphQLSchema') {
-    return loadSchema(pointerOrPointers, allOptions);
+    return loadSchemaSync(pointerOrPointers, allOptions);
   } else {
-    const results = await loadTypedefs(pointerOrPointers, allOptions);
+    const results = loadTypedefsSync(pointerOrPointers, allOptions);
     const mergedDocuments = mergeTypeDefs(results.map(r => r.document), allOptions);
     if (out === 'DocumentNode') {
       if (typeof mergedDocuments === 'string') {
