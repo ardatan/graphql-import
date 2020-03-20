@@ -27,26 +27,26 @@ type PointerOrPointers = UnnormalizedTypeDefPointer | UnnormalizedTypeDefPointer
 
 export function importSchema(
   pointerOrPointers: PointerOrPointers,
-  schemas: { [key: string]: string },
+  schemas?: { [key: string]: string },
 ): string;
 export function importSchema(
   pointerOrPointers: PointerOrPointers,
-  schemas: { [key: string]: string },
-  options: ImportSchemaOptions<{ out?: 'string' }>,
+  schemas?: { [key: string]: string },
+  options?: ImportSchemaOptions<{ out?: 'string' }>,
 ): string;
 export function importSchema(
   pointerOrPointers: PointerOrPointers,
-  schemas: { [key: string]: string },
-  options: ImportSchemaOptions<{ out: 'DocumentNode' }>,
+  schemas?: { [key: string]: string },
+  options?: ImportSchemaOptions<{ out: 'DocumentNode' }>,
 ): DocumentNode;
 export function importSchema(
   pointerOrPointers: PointerOrPointers,
-  schemas: { [key: string]: string },
-  options: ImportSchemaOptions<{ out: 'GraphQLSchema' }>,
+  schemas?: { [key: string]: string },
+  options?: ImportSchemaOptions<{ out: 'GraphQLSchema' }>,
 ): GraphQLSchema;
 export function importSchema(
   pointerOrPointers: PointerOrPointers,
-  schemas: { [key: string]: string },
+  schemas?: { [key: string]: string },
   options: ImportSchemaOptions = {},
 ) {
 
