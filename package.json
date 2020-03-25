@@ -35,7 +35,7 @@
     "jest": "25.1.0",
     "ts-jest": "25.2.1",
     "@types/lodash": "4.14.149",
-    "@types/node": "13.9.3",
+    "@types/node": "13.9.4",
     "graphql": "14.6.0",
     "tslint": "6.1.0",
     "tslint-config-standard": "9.0.0",
