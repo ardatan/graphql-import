@@ -3,9 +3,6 @@ import { UrlLoader } from '@graphql-toolkit/url-loader';
 import { JsonFileLoader } from '@graphql-toolkit/json-file-loader';
 import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
 import { CodeFileLoader, CodeFileLoaderOptions } from '@graphql-toolkit/code-file-loader';
-import { GitLoader } from '@graphql-toolkit/git-loader';
-import { GithubLoader } from '@graphql-toolkit/github-loader';
-import { ApolloEngineLoader } from '@graphql-toolkit/apollo-engine-loader';
 import { PrismaLoader } from '@graphql-toolkit/prisma-loader';
 import { print, DocumentNode, GraphQLSchema, parse } from 'graphql';
 import { mergeTypeDefs } from '@graphql-toolkit/schema-merging';
@@ -15,9 +12,6 @@ const DEFAULT_SCHEMA_LOADERS = [
   new JsonFileLoader(),
   new GraphQLFileLoader(),
   new CodeFileLoader(),
-  new GitLoader(),
-  new GithubLoader(),
-  new ApolloEngineLoader(),
   new PrismaLoader()
 ];
 

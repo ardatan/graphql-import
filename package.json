@@ -43,15 +43,12 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-toolkit/apollo-engine-loader": "0.9.8-alpha-b446d3c.44+b446d3c",
-    "@graphql-toolkit/core": "0.9.8-alpha-b446d3c.44+b446d3c",
-    "@graphql-toolkit/code-file-loader": "0.9.8-alpha-b446d3c.44+b446d3c",
-    "@graphql-toolkit/url-loader": "0.9.8-alpha-b446d3c.44+b446d3c",
-    "@graphql-toolkit/json-file-loader": "0.9.8-alpha-b446d3c.44+b446d3c",
-    "@graphql-toolkit/graphql-file-loader": "0.9.8-alpha-b446d3c.44+b446d3c",
-    "@graphql-toolkit/git-loader": "0.9.8-alpha-b446d3c.44+b446d3c",
-    "@graphql-toolkit/github-loader": "0.9.8-alpha-b446d3c.44+b446d3c",
-    "@graphql-toolkit/prisma-loader": "0.9.8-alpha-b446d3c.44+b446d3c",
-    "@graphql-toolkit/schema-merging": "0.9.8-alpha-b446d3c.44+b446d3c"
+    "@graphql-toolkit/core": "0.9.10",
+    "@graphql-toolkit/code-file-loader": "0.9.10",
+    "@graphql-toolkit/url-loader": "0.9.10",
+    "@graphql-toolkit/json-file-loader": "0.9.10",
+    "@graphql-toolkit/graphql-file-loader": "0.9.10",
+    "@graphql-toolkit/prisma-loader": "0.9.10",
+    "@graphql-toolkit/schema-merging": "0.9.10"
   }
 }
