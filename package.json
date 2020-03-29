@@ -43,12 +43,12 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@graphql-toolkit/core": "0.9.10",
-    "@graphql-toolkit/code-file-loader": "0.9.10",
-    "@graphql-toolkit/url-loader": "0.9.10",
-    "@graphql-toolkit/json-file-loader": "0.9.10",
-    "@graphql-toolkit/graphql-file-loader": "0.9.10",
-    "@graphql-toolkit/prisma-loader": "0.9.10",
-    "@graphql-toolkit/schema-merging": "0.9.10"
+    "@graphql-toolkit/core": "0.9.11",
+    "@graphql-toolkit/code-file-loader": "0.9.11",
+    "@graphql-toolkit/url-loader": "0.9.11",
+    "@graphql-toolkit/json-file-loader": "0.9.11",
+    "@graphql-toolkit/graphql-file-loader": "0.9.11",
+    "@graphql-toolkit/prisma-loader": "0.9.11",
+    "@graphql-toolkit/schema-merging": "0.9.11"
   }
 }
