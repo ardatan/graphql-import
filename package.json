@@ -17,10 +17,9 @@
     "clean": "rimraf dist",
     "prebuild": "yarn clean",
     "build": "bob",
-    "prepack": "bob-update-version",
     "test": "jest --no-watchman --passWithNoTests",
     "lint": "tslint src/**/*.ts",
-    "ci:release:canary": "node bump.js && npm publish --tag alpha",
+    "ci:release:canary": "node bump.js && bob-update-version && npm publish dist --tag alpha",
     "docs":
       "typedoc --out docs src/index.ts --hideGenerator --exclude **/*.test.ts",
     "docs:publish":
@@ -30,11 +29,10 @@
     "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0"
   },
   "devDependencies": {
-    "@ardatan/bob": "0.2.7",
+    "bob-the-bundler": "0.3.4",
     "@types/jest": "25.1.4",
     "jest": "25.2.3",
     "ts-jest": "25.2.1",
-    "@types/lodash": "4.14.149",
     "@types/node": "13.9.5",
     "graphql": "14.6.0",
     "tslint": "6.1.0",
