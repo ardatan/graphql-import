@@ -37,7 +37,7 @@
     "graphql": "15.0.0",
     "tslint": "6.1.1",
     "tslint-config-standard": "9.0.0",
-    "typedoc": "0.17.3",
+    "typedoc": "0.17.4",
     "typescript": "3.8.3"
   },
   "dependencies": {
