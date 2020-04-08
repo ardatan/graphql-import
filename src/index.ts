@@ -3,7 +3,6 @@ import { UrlLoader } from '@graphql-toolkit/url-loader';
 import { JsonFileLoader } from '@graphql-toolkit/json-file-loader';
 import { GraphQLFileLoader } from '@graphql-toolkit/graphql-file-loader';
 import { CodeFileLoader, CodeFileLoaderOptions } from '@graphql-toolkit/code-file-loader';
-import { PrismaLoader } from '@graphql-toolkit/prisma-loader';
 import { print, DocumentNode, GraphQLSchema, parse } from 'graphql';
 import { mergeTypeDefs } from '@graphql-toolkit/schema-merging';
 
@@ -12,7 +11,6 @@ const DEFAULT_SCHEMA_LOADERS = [
   new JsonFileLoader(),
   new GraphQLFileLoader(),
   new CodeFileLoader(),
-  new PrismaLoader()
 ];
 
 export type ImportSchemaOptions<T = {}> = Partial<LoadSchemaOptions & LoadTypedefsOptions<CodeFileLoaderOptions>> & T;

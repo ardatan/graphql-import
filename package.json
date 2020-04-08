@@ -46,7 +46,6 @@
     "@graphql-toolkit/url-loader": "0.10.3",
     "@graphql-toolkit/json-file-loader": "0.10.3",
     "@graphql-toolkit/graphql-file-loader": "0.10.3",
-    "@graphql-toolkit/prisma-loader": "0.10.3",
     "@graphql-toolkit/schema-merging": "0.10.3"
   }
 }
