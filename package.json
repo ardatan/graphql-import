@@ -19,11 +19,7 @@
     "build": "bob",
     "test": "jest --no-watchman --passWithNoTests",
     "lint": "tslint src/**/*.ts",
-    "ci:release:canary": "node bump.js && bob-update-version && npm publish dist --tag alpha",
-    "docs":
-      "typedoc --out docs src/index.ts --hideGenerator --exclude **/*.test.ts",
-    "docs:publish":
-      "cp ./now.json ./docs && cd docs && now --public -f && now alias && now rm --yes --safe graphql-import & cd .."
+    "ci:release:canary": "node bump.js && bob-update-version && npm publish dist --tag alpha"
   },
   "peerDependencies": {
     "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0"
@@ -37,7 +33,6 @@
     "graphql": "15.0.0",
     "tslint": "6.1.1",
     "tslint-config-standard": "9.0.0",
-    "typedoc": "0.17.4",
     "typescript": "3.8.3"
   },
   "dependencies": {
