@@ -31,7 +31,7 @@
     "ts-jest": "25.4.0",
     "@types/node": "13.13.4",
     "graphql": "15.0.0",
-    "tslint": "6.1.1",
+    "tslint": "6.1.2",
     "tslint-config-standard": "9.0.0",
     "typescript": "3.8.3"
   },
