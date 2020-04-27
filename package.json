@@ -2,7 +2,11 @@
   "name": "graphql-import",
   "version": "1.0.2",
   "license": "MIT",
-  "repository": "git@github.com:ardatan/graphql-import.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ardatan/graphql-import"
+  },
+  "homepage": "https://github.com/ardatan/graphql-import#readme",
   "sideEffects": false,
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
