@@ -40,11 +40,11 @@
     "typescript": "3.9.2"
   },
   "dependencies": {
-    "@graphql-toolkit/core": "0.10.6",
-    "@graphql-toolkit/code-file-loader": "0.10.6",
-    "@graphql-toolkit/url-loader": "0.10.6",
-    "@graphql-toolkit/json-file-loader": "0.10.6",
-    "@graphql-toolkit/graphql-file-loader": "0.10.6",
-    "@graphql-toolkit/schema-merging": "0.10.6"
+    "@graphql-toolkit/core": "0.10.7",
+    "@graphql-toolkit/code-file-loader": "0.10.7",
+    "@graphql-toolkit/url-loader": "0.10.7",
+    "@graphql-toolkit/json-file-loader": "0.10.7",
+    "@graphql-toolkit/graphql-file-loader": "0.10.7",
+    "@graphql-toolkit/schema-merging": "0.10.7"
   }
 }
