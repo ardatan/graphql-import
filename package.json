@@ -37,7 +37,7 @@
     "graphql": "15.0.0",
     "tslint": "6.1.2",
     "tslint-config-standard": "9.0.0",
-    "typescript": "3.9.2"
+    "typescript": "3.9.3"
   },
   "dependencies": {
     "@graphql-toolkit/core": "0.10.7",
